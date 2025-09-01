@@ -96,7 +96,7 @@
                     {% if user.is_authenticated %}
                         {% if is_palestrante %}
                             <li class="nav-item">
-                                <a class="nav-link" href="{% url 'painel_palestrante' %}"><i class="bi bi-speedometer2"></i> Painel</a>
+                                <a class="nav-link" href="{% url 'usuario:painel_palestrante' %}"><i class="bi bi-speedometer2"></i> Painel</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="{% url 'meus_eventos' %}"><i class="bi bi-calendar-check"></i> Meus Eventos</a>
@@ -106,11 +106,11 @@
                             </li>
                         {% elif is_cliente %}
                             <li class="nav-item">
-                                <a class="nav-link" href="{% url 'meus_ingressos' %}"><i class="bi bi-ticket"></i> Meus Ingressos</a>
+                                <a class="nav-link" href="{% url 'usuario:meus_ingressos' %}"><i class="bi bi-ticket"></i> Meus Ingressos</a>
                             </li>
                         {% endif %}
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'criar_perfil' %}"><i class="bi bi-person"></i> Meu Perfil</a>
+                            <a class="nav-link" href="{% url 'usuario:criar_perfil' %}"><i class="bi bi-person"></i> Meu Perfil</a>
                         </li>
                         {% if user.is_staff %}
                             <li class="nav-item">
@@ -125,18 +125,18 @@
                                 {% endif %}
                             </a>
                             <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="{% url 'logout' %}"><i class="bi bi-box-arrow-right"></i> Sair</a></li>
+                                <li><a class="dropdown-item" href="{% url 'usuario:logout' %}"><i class="bi bi-box-arrow-right"></i> Sair</a></li>
                             </ul>
                         </li>
                     {% else %}
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'login' %}"><i class="bi bi-box-arrow-in-right"></i> Login</a>
+                            <a class="nav-link" href="{% url 'usuario:login' %}"><i class="bi bi-box-arrow-in-right"></i> Login</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'registro' %}"><i class="bi bi-person-plus"></i> Cadastrar</a>
+                            <a class="nav-link" href="{% url 'usuario:registro' %}"><i class="bi bi-person-plus"></i> Cadastrar</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'cadastrar_palestrante' %}"><i class="bi bi-person-badge"></i> Ser Palestrante</a>
+                            <a class="nav-link" href="{% url 'usuario:cadastrar_palestrante' %}"><i class="bi bi-person-badge"></i> Ser Palestrante</a>
                         </li>
                     {% endif %}
                 </ul>

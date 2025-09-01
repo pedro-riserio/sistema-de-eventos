@@ -142,10 +142,10 @@
                                 <div class="text-center mb-3">
                                     <p class="small text-muted">Faça login para comprar ingressos</p>
                                 </div>
-                                <a href="{% url 'login' %}?next={% url 'detalhe_evento' evento.id %}" class="btn btn-primary w-100">
+                                <a href="{% url 'usuario:login' %}?next={% url 'detalhe_evento' evento.id %}" class="btn btn-primary w-100">
                                     <i class="bi bi-box-arrow-in-right me-2"></i>Fazer Login
                                 </a>
-                                <a href="{% url 'registro' %}" class="btn btn-outline-primary w-100 mt-2">
+                                <a href="{% url 'usuario:registro' %}" class="btn btn-outline-primary w-100 mt-2">
                                     <i class="bi bi-person-plus me-2"></i>Criar Conta
                                 </a>
                             {% endif %}

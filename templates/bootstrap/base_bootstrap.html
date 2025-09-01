@@ -46,12 +46,12 @@
                                     <li><a class="dropdown-item" href="/admin/"><i class="fas fa-cog"></i> Admin</a></li>
                                     <li><hr class="dropdown-divider"></li>
                                 {% endif %}
-                                <li><a class="dropdown-item" href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Sair</a></li>
+                                <li><a class="dropdown-item" href="{% url 'usuario:logout' %}"><i class="fas fa-sign-out-alt"></i> Sair</a></li>
                             </ul>
                         </li>
                     {% else %}
                         <li class="nav-item">
-                            <a class="nav-link btn btn-primary ms-lg-3 text-white" href="{% url 'login' %}">Login</a>
+                            <a class="nav-link btn btn-primary ms-lg-3 text-white" href="{% url 'usuario:login' %}">Login</a>
                         </li>
                     {% endif %}
                 </ul>

@@ -312,7 +312,7 @@ def registro(request):
         if form.is_valid():
             user = form.save()
             messages.success(request, 'Conta criada com sucesso! Faça login para continuar.')
-            return redirect('login')
+            return redirect('usuario:login')
     else:
         form = CustomUserCreationForm()
     
@@ -326,7 +326,7 @@ def cadastrar_palestrante(request):
     # Verificar se o usuário já é palestrante
     if hasattr(request.user, 'profile') and request.user.profile.tipo_usuario == 'palestrante':
         messages.info(request, 'Você já está cadastrado como palestrante.')
-        return redirect('painel_palestrante')
+        return redirect('usuario:painel_palestrante')
     
     if request.method == 'POST':
         # Atualizar o perfil do usuário para palestrante
@@ -353,7 +353,7 @@ def cadastrar_palestrante(request):
         )
         
         messages.success(request, 'Cadastro como palestrante realizado com sucesso! Agora você pode criar eventos.')
-        return redirect('painel_palestrante')
+        return redirect('usuario:painel_palestrante')
     
     context = {}
     return render(request, 'eventos/cadastrar_palestrante.html', context)

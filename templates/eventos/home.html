@@ -15,7 +15,7 @@
                         {% if user.is_authenticated %}
                             <a href="{% url 'criar_perfil' %}" class="btn btn-outline-light btn-lg px-4">Meu Perfil</a>
                         {% else %}
-                            <a href="{% url 'registro' %}" class="btn btn-outline-light btn-lg px-4">Criar Conta</a>
+                            <a href="{% url 'usuario:registro' %}" class="btn btn-outline-light btn-lg px-4">Criar Conta</a>
                         {% endif %}
                     </div>
                 </div>

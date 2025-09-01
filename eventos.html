@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Eventos</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome para ícones -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <!-- CSS personalizado -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="#">EventosPSW</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#eventos">Eventos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#sobre">Sobre</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#contato">Contato</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link btn btn-primary ms-lg-3 text-white" href="#">Login</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Banner principal -->
+    <header class="hero-section py-5 text-white text-center" style="background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://source.unsplash.com/random/1920x1080/?event') no-repeat center center; background-size: cover; height: 80vh; display: flex; align-items: center;">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 mx-auto">
+                    <h1 class="display-4 fw-bold mb-4">Encontre os Melhores Eventos</h1>
+                    <p class="lead mb-4">Descubra, participe e organize eventos incríveis em sua região</p>
+                    <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+                        <a href="#eventos" class="btn btn-primary btn-lg px-4 me-sm-3">Ver Eventos</a>
+                        <a href="#" class="btn btn-outline-light btn-lg px-4">Criar Evento</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Seção de busca -->
+    <section class="py-4 bg-light">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-10 mx-auto">
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+                            <form class="row g-3">
+                                <div class="col-md-4">
+                                    <label for="eventType" class="form-label">Tipo de Evento</label>
+                                    <select class="form-select" id="eventType">
+                                        <option selected>Todos</option>
+                                        <option>Conferências</option>
+                                        <option>Workshops</option>
+                                        <option>Festas</option>
+                                        <option>Exposições</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="eventDate" class="form-label">Data</label>
+                                    <input type="date" class="form-control" id="eventDate">
+                                </div>
+                                <div class="col-md-4 d-flex align-items-end">
+                                    <button type="submit" class="btn btn-primary w-100">Buscar Eventos</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Seção de eventos em destaque -->
+    <section id="eventos" class="py-5">
+        <div class="container">
+            <h2 class="text-center mb-5">Eventos em Destaque</h2>
+            <div class="row g-4">
+                <!-- Evento 1 -->
+                <div class="col-md-4">
+                    <div class="card h-100 shadow-sm">
+                        <img src="https://source.unsplash.com/random/600x400/?conference" class="card-img-top" alt="Evento 1">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="badge bg-primary">Conferência</span>
+                                <small class="text-muted"><i class="fas fa-calendar-alt me-1"></i> 15/12/2023</small>
+                            </div>
+                            <h5 class="card-title">Conferência de Tecnologia</h5>
+                            <p class="card-text">Uma conferência sobre as últimas tendências em tecnologia e inovação.</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <i class="fas fa-map-marker-alt text-muted me-1"></i>
+                                    <small class="text-muted">São Paulo, SP</small>
+                                </div>
+                                <a href="#" class="btn btn-sm btn-outline-primary">Ver detalhes</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Evento 2 -->
+                <div class="col-md-4">
+                    <div class="card h-100 shadow-sm">
+                        <img src="https://source.unsplash.com/random/600x400/?workshop" class="card-img-top" alt="Evento 2">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="badge bg-success">Workshop</span>
+                                <small class="text-muted"><i class="fas fa-calendar-alt me-1"></i> 20/12/2023</small>
+                            </div>
+                            <h5 class="card-title">Workshop de Design</h5>
+                            <p class="card-text">Aprenda técnicas avançadas de design com profissionais experientes.</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <i class="fas fa-map-marker-alt text-muted me-1"></i>
+                                    <small class="text-muted">Rio de Janeiro, RJ</small>
+                                </div>
+                                <a href="#" class="btn btn-sm btn-outline-primary">Ver detalhes</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Evento 3 -->
+                <div class="col-md-4">
+                    <div class="card h-100 shadow-sm">
+                        <img src="https://source.unsplash.com/random/600x400/?party" class="card-img-top" alt="Evento 3">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="badge bg-danger">Festa</span>
+                                <small class="text-muted"><i class="fas fa-calendar-alt me-1"></i> 31/12/2023</small>
+                            </div>
+                            <h5 class="card-title">Festa de Ano Novo</h5>
+                            <p class="card-text">Celebre a chegada do ano novo com música, comida e muita diversão.</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <i class="fas fa-map-marker-alt text-muted me-1"></i>
+                                    <small class="text-muted">Florianópolis, SC</small>
+                                </div>
+                                <a href="#" class="btn btn-sm btn-outline-primary">Ver detalhes</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="text-center mt-5">
+                <a href="#" class="btn btn-primary">Ver Todos os Eventos</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Seção de categorias -->
+    <section class="py-5 bg-light">
+        <div class="container">
+            <h2 class="text-center mb-5">Categorias de Eventos</h2>
+            <div class="row g-4 text-center">
+                <div class="col-md-3 col-6">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body">
+                            <div class="icon-box mb-3">
+                                <i class="fas fa-laptop fa-3x text-primary"></i>
+                            </div>
+                            <h5>Conferências</h5>
+                            <p class="small text-muted">Eventos profissionais e acadêmicos</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body">
+                            <div class="icon-box mb-3">
+                                <i class="fas fa-graduation-cap fa-3x text-success"></i>
+                            </div>
+                            <h5>Workshops</h5>
+                            <p class="small text-muted">Aprenda novas habilidades</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body">
+                            <div class="icon-box mb-3">
+                                <i class="fas fa-music fa-3x text-danger"></i>
+                            </div>
+                            <h5>Festas</h5>
+                            <p class="small text-muted">Celebrações e eventos sociais</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body">
+                            <div class="icon-box mb-3">
+                                <i class="fas fa-palette fa-3x text-warning"></i>
+                            </div>
+                            <h5>Exposições</h5>
+                            <p class="small text-muted">Arte, cultura e ciência</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Seção sobre -->
+    <section id="sobre" class="py-5">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6 mb-4 mb-lg-0">
+                    <img src="https://source.unsplash.com/random/600x400/?team" alt="Sobre nós" class="img-fluid rounded shadow">
+                </div>
+                <div class="col-lg-6">
+                    <h2 class="mb-4">Sobre o EventosPSW</h2>
+                    <p class="lead">Conectando pessoas através de experiências memoráveis</p>
+                    <p>O EventosPSW é uma plataforma dedicada a facilitar a descoberta, participação e organização de eventos. Nossa missão é conectar pessoas através de experiências memoráveis e promover a cultura e o networking em diversas áreas.</p>
+                    <p>Seja você um participante em busca de novas experiências ou um organizador querendo alcançar seu público-alvo, o EventosPSW oferece as ferramentas necessárias para tornar cada evento um sucesso.</p>
+                    <a href="#" class="btn btn-outline-primary mt-3">Saiba mais</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Seção de depoimentos -->
+    <section class="py-5 bg-light">
+        <div class="container">
+            <h2 class="text-center mb-5">O que Dizem Nossos Usuários</h2>
+            <div class="row">
+                <div class="col-lg-8 mx-auto">
+                    <div id="testimonialCarousel" class="carousel slide" data-bs-ride="carousel">
+                        <div class="carousel-inner">
+                            <div class="carousel-item active">
+                                <div class="card border-0 shadow-sm">
+                                    <div class="card-body text-center p-5">
+                                        <img src="https://source.unsplash.com/random/100x100/?portrait" class="rounded-circle mb-3" width="80" alt="Usuário">
+                                        <p class="lead mb-3">"A plataforma EventosPSW transformou a maneira como organizo meus eventos. Fácil de usar e com ótimas ferramentas!"</p>
+                                        <h5 class="mb-0">Ana Silva</h5>
+                                        <small class="text-muted">Organizadora de Eventos</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="carousel-item">
+                                <div class="card border-0 shadow-sm">
+                                    <div class="card-body text-center p-5">
+                                        <img src="https://source.unsplash.com/random/100x100/?man" class="rounded-circle mb-3" width="80" alt="Usuário">
+                                        <p class="lead mb-3">"Descobri eventos incríveis que nunca teria encontrado de outra forma. Recomendo a todos!"</p>
+                                        <h5 class="mb-0">Carlos Oliveira</h5>
+                                        <small class="text-muted">Participante</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="carousel-item">
+                                <div class="card border-0 shadow-sm">
+                                    <div class="card-body text-center p-5">
+                                        <img src="https://source.unsplash.com/random/100x100/?woman" class="rounded-circle mb-3" width="80" alt="Usuário">
+                                        <p class="lead mb-3">"Como palestrante, aprecio a visibilidade que o EventosPSW proporciona. Meus workshops estão sempre lotados!"</p>
+                                        <h5 class="mb-0">Mariana Santos</h5>
+                                        <small class="text-muted">Palestrante</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="carousel-control-prev" type="button" data-bs-target="#testimonialCarousel" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Anterior</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#testimonialCarousel" data-bs-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Próximo</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Seção de contato -->
+    <section id="contato" class="py-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-6 mb-4 mb-lg-0">
+                    <h2 class="mb-4">Entre em Contato</h2>
+                    <p>Tem alguma dúvida ou sugestão? Preencha o formulário ao lado e nossa equipe entrará em contato o mais breve possível.</p>
+                    <div class="d-flex mb-3">
+                        <div class="me-3">
+                            <i class="fas fa-map-marker-alt text-primary fa-2x"></i>
+                        </div>
+                        <div>
+                            <h5>Endereço</h5>
+                            <p>Av. Paulista, 1000 - São Paulo, SP</p>
+                        </div>
+                    </div>
+                    <div class="d-flex mb-3">
+                        <div class="me-3">
+                            <i class="fas fa-envelope text-primary fa-2x"></i>
+                        </div>
+                        <div>
+                            <h5>Email</h5>
+                            <p>contato@eventospsw.com</p>
+                        </div>
+                    </div>
+                    <div class="d-flex">
+                        <div class="me-3">
+                            <i class="fas fa-phone text-primary fa-2x"></i>
+                        </div>
+                        <div>
+                            <h5>Telefone</h5>
+                            <p>(11) 99999-9999</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="card shadow-sm">
+                        <div class="card-body p-4">
+                            <form>
+                                <div class="mb-3">
+                                    <label for="name" class="form-label">Nome</label>
+                                    <input type="text" class="form-control" id="name" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="email" class="form-label">Email</label>
+                                    <input type="email" class="form-control" id="email" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="subject" class="form-label">Assunto</label>
+                                    <input type="text" class="form-control" id="subject" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="message" class="form-label">Mensagem</label>
+                                    <textarea class="form-control" id="message" rows="4" required></textarea>
+                                </div>
+                                <button type="submit" class="btn btn-primary w-100">Enviar Mensagem</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Newsletter -->
+    <section class="py-5 bg-primary text-white">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6 mb-4 mb-lg-0">
+                    <h3 class="mb-0">Inscreva-se em nossa Newsletter</h3>
+                    <p class="mb-0">Receba as últimas novidades sobre eventos em sua região</p>
+                </div>
+                <div class="col-lg-6">
+                    <form class="d-flex">
+                        <input type="email" class="form-control me-2" placeholder="Seu email" required>
+                        <button type="submit" class="btn btn-light">Inscrever</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-5 bg-dark text-white">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-lg-4">
+                    <h5>EventosPSW</h5>
+                    <p>Conectando pessoas através de experiências memoráveis desde 2023.</p>
+                    <div class="social-links">
+                        <a href="#" class="text-white me-2"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="text-white me-2"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-white me-2"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="text-white"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-4">
+                    <h5>Links Rápidos</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="#" class="text-white text-decoration-none">Home</a></li>
+                        <li class="mb-2"><a href="#eventos" class="text-white text-decoration-none">Eventos</a></li>
+                        <li class="mb-2"><a href="#sobre" class="text-white text-decoration-none">Sobre</a></li>
+                        <li><a href="#contato" class="text-white text-decoration-none">Contato</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-2 col-md-4">
+                    <h5>Categorias</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="#" class="text-white text-decoration-none">Conferências</a></li>
+                        <li class="mb-2"><a href="#" class="text-white text-decoration-none">Workshops</a></li>
+                        <li class="mb-2"><a href="#" class="text-white text-decoration-none">Festas</a></li>
+                        <li><a href="#" class="text-white text-decoration-none">Exposições</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-4 col-md-4">
+                    <h5>Informações Legais</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="#" class="text-white text-decoration-none">Termos de Uso</a></li>
+                        <li class="mb-2"><a href="#" class="text-white text-decoration-none">Política de Privacidade</a></li>
+                        <li><a href="#" class="text-white text-decoration-none">FAQ</a></li>
+                    </ul>
+                </div>
+            </div>
+            <hr class="my-4">
+            <div class="text-center">
+                <p class="mb-0">&copy; 2023 EventosPSW. Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- JavaScript personalizado -->
+    <script src="js/script.js"></script>
+</body>
+</html>

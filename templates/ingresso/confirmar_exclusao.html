@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Confirmar Exclusão - Ingresso{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow border-danger">
+                <div class="card-header bg-danger text-white">
+                    <h4 class="mb-0">
+                        <i class="bi bi-exclamation-triangle me-2"></i>Confirmar Exclusão
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-warning" role="alert">
+                        <i class="bi bi-info-circle me-2"></i>
+                        Tem certeza que deseja excluir este ingresso?
+                    </div>
+                    
+                    <div class="mb-3">
+                        <p><strong>Evento:</strong> {{ ingresso.evento.nome }}</p>
+                        <p><strong>Tipo:</strong> {{ ingresso.get_tipo_display }}</p>
+                        <p><strong>Preço:</strong> R$ {{ ingresso.preco|floatformat:2 }}</p>
+                        <p><strong>Quantidade Disponível:</strong> {{ ingresso.quantidade_disponivel }}</p>
+                    </div>
+                    
+                    <div class="alert alert-danger" role="alert">
+                        <i class="bi bi-exclamation-triangle me-2"></i>
+                        <strong>Atenção:</strong> Esta ação não pode ser desfeita!
+                    </div>
+                    
+                    <form method="post" class="d-inline">
+                        {% csrf_token %}
+                        <div class="d-flex justify-content-between">
+                            <a href="{% url 'lista_ingressos' %}" class="btn btn-outline-secondary">
+                                <i class="bi bi-x-lg me-1"></i>Cancelar
+                            </a>
+                            <button type="submit" class="btn btn-danger">
+                                <i class="bi bi-trash me-1"></i>Confirmar Exclusão
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,184 @@
+{% extends 'base.html' %}
+
+{% block title %}Eventos - EventosPSW{% endblock %}
+
+{% block content %}
+    <!-- Header da página -->
+    <div class="bg-primary text-white py-4">
+        <div class="container">
+            <h1 class="mb-0">Eventos Disponíveis</h1>
+            <p class="mb-0">Encontre o evento perfeito para você</p>
+        </div>
+    </div>
+
+    <!-- Seção de filtros -->
+    <section class="py-4 bg-light">
+        <div class="container">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <form method="get" class="row g-3">
+                        <div class="col-md-3">
+                            <label for="tipo" class="form-label">Tipo de Evento</label>
+                            <select class="form-select" name="tipo" id="tipo">
+                                <option value="todos" {% if request.GET.tipo == 'todos' or not request.GET.tipo %}selected{% endif %}>Todos</option>
+                                <option value="conferencia" {% if request.GET.tipo == 'conferencia' %}selected{% endif %}>Conferências</option>
+                                <option value="workshop" {% if request.GET.tipo == 'workshop' %}selected{% endif %}>Workshops</option>
+                                <option value="festa" {% if request.GET.tipo == 'festa' %}selected{% endif %}>Festas</option>
+                                <option value="exposicao" {% if request.GET.tipo == 'exposicao' %}selected{% endif %}>Exposições</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="data" class="form-label">Data</label>
+                            <input type="date" class="form-control" name="data" id="data" value="{{ request.GET.data }}">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="busca" class="form-label">Buscar</label>
+                            <input type="text" class="form-control" name="busca" id="busca" placeholder="Nome do evento, local..." value="{{ request.GET.busca }}">
+                        </div>
+                        <div class="col-md-2 d-flex align-items-end">
+                            <button type="submit" class="btn btn-primary w-100">Filtrar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Lista de eventos -->
+    <section class="py-5">
+        <div class="container">
+            {% if eventos %}
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <p class="text-muted">{{ eventos|length }} evento{{ eventos|length|pluralize }} encontrado{{ eventos|length|pluralize }}</p>
+                    </div>
+                    <div class="col-md-6 text-end">
+                        <div class="btn-group" role="group">
+                            <input type="radio" class="btn-check" name="view" id="grid-view" checked>
+                            <label class="btn btn-outline-secondary" for="grid-view"><i class="bi bi-grid-3x3-gap"></i></label>
+                            <input type="radio" class="btn-check" name="view" id="list-view">
+                            <label class="btn btn-outline-secondary" for="list-view"><i class="bi bi-list"></i></label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row g-4" id="eventos-grid">
+                    {% for evento in eventos %}
+                        <div class="col-md-6 col-lg-4">
+                            <div class="card h-100 shadow-sm evento-card">
+                                <img src="https://source.unsplash.com/random/600x400/?{{ evento.get_tipo_display|lower }}" class="card-img-top" alt="{{ evento.nome }}" style="height: 200px; object-fit: cover;">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <span class="badge bg-{% if evento.tipo == 'conferencia' %}primary{% elif evento.tipo == 'workshop' %}success{% elif evento.tipo == 'festa' %}danger{% else %}warning{% endif %}">{{ evento.get_tipo_display }}</span>
+                                        <small class="text-muted"><i class="bi bi-calendar3 me-1"></i> {{ evento.data|date:"d/m/Y" }}</small>
+                                    </div>
+                                    <h5 class="card-title">{{ evento.nome }}</h5>
+                                    <p class="card-text text-muted small">{{ evento.descricao|truncatewords:20 }}</p>
+                                    <div class="mb-2">
+                                        <i class="bi bi-geo-alt text-muted me-1"></i>
+                                        <small class="text-muted">{{ evento.local.nome }}</small>
+                                    </div>
+                                    <div class="mb-2">
+                                        <i class="bi bi-clock text-muted me-1"></i>
+                                        <small class="text-muted">{{ evento.horario }}</small>
+                                    </div>
+                                    {% if evento.valor > 0 %}
+                                        <div class="mb-2">
+                                            <i class="bi bi-tag text-muted me-1"></i>
+                                            <small class="text-success fw-bold">R$ {{ evento.valor }}</small>
+                                        </div>
+                                    {% else %}
+                                        <div class="mb-2">
+                                            <span class="badge bg-success">Gratuito</span>
+                                        </div>
+                                    {% endif %}
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <small class="text-muted">
+                                            {% if evento.vagas_disponiveis > 0 %}
+                                                <i class="bi bi-people text-success me-1"></i>{{ evento.vagas_disponiveis }} vagas
+                                            {% else %}
+                                                <i class="bi bi-people text-danger me-1"></i>Esgotado
+                                            {% endif %}
+                                        </small>
+                                        <a href="{% url 'detalhe_evento' evento.id %}" class="btn btn-sm btn-outline-primary">Ver detalhes</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Paginação -->
+                {% if is_paginated %}
+                    <nav aria-label="Navegação de páginas" class="mt-5">
+                        <ul class="pagination justify-content-center">
+                            {% if page_obj.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?{% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page=1">Primeira</a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" href="?{% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ page_obj.previous_page_number }}">Anterior</a>
+                                </li>
+                            {% endif %}
+
+                            {% for num in page_obj.paginator.page_range %}
+                                {% if page_obj.number == num %}
+                                    <li class="page-item active">
+                                        <span class="page-link">{{ num }}</span>
+                                    </li>
+                                {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?{% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ num }}">{{ num }}</a>
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+
+                            {% if page_obj.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?{% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ page_obj.next_page_number }}">Próxima</a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" href="?{% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ page_obj.paginator.num_pages }}">Última</a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                {% endif %}
+            {% else %}
+                <div class="text-center py-5">
+                    <i class="bi bi-calendar-x fa-4x text-muted mb-3"></i>
+                    <h3 class="text-muted">Nenhum evento encontrado</h3>
+                    <p class="text-muted">Tente ajustar os filtros ou volte mais tarde para ver novos eventos.</p>
+                    <a href="{% url 'lista_eventos' %}" class="btn btn-primary">Ver todos os eventos</a>
+                </div>
+            {% endif %}
+        </div>
+    </section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Alternar entre visualização em grade e lista
+    document.getElementById('list-view').addEventListener('change', function() {
+        if (this.checked) {
+            document.getElementById('eventos-grid').className = 'row g-2';
+            document.querySelectorAll('.evento-card').forEach(function(card) {
+                card.parentElement.className = 'col-12';
+                card.className = 'card shadow-sm evento-card';
+                card.style.flexDirection = 'row';
+            });
+        }
+    });
+
+    document.getElementById('grid-view').addEventListener('change', function() {
+        if (this.checked) {
+            document.getElementById('eventos-grid').className = 'row g-4';
+            document.querySelectorAll('.evento-card').forEach(function(card) {
+                card.parentElement.className = 'col-md-6 col-lg-4';
+                card.className = 'card h-100 shadow-sm evento-card';
+                card.style.flexDirection = '';
+            });
+        }
+    });
+</script>
+{% endblock %}

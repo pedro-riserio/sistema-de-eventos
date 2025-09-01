@@ -1,0 +1,280 @@
+{% extends 'base.html' %}
+
+{% block title %}Meus Ingressos - EventosPSW{% endblock %}
+
+{% block content %}
+    <div class="container py-5">
+        <div class="row">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2><i class="fas fa-ticket-alt me-2"></i>Meus Ingressos</h2>
+                    <a href="{% url 'lista_eventos' %}" class="btn btn-primary">
+                        <i class="fas fa-plus me-2"></i>Buscar Eventos
+                    </a>
+                </div>
+
+                {% if ingressos %}
+                    <div class="row">
+                        {% for ingresso in ingressos %}
+                            <div class="col-lg-6 col-xl-4 mb-4">
+                                <div class="card h-100 shadow-sm ticket-card">
+                                    <!-- Event Image -->
+                                    {% if ingresso.evento.imagem %}
+                                        <img src="{{ ingresso.evento.imagem.url }}" class="card-img-top" style="height: 200px; object-fit: cover;" alt="{{ ingresso.evento.nome }}">
+                                    {% else %}
+                                        <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                                            <i class="fas fa-calendar-alt fa-3x text-muted"></i>
+                                        </div>
+                                    {% endif %}
+                                    
+                                    <!-- Status Badge -->
+                                    <div class="position-absolute top-0 end-0 m-2">
+                                        {% if ingresso.evento.data >= today %}
+                                            <span class="badge bg-success">Ativo</span>
+                                        {% else %}
+                                            <span class="badge bg-secondary">Finalizado</span>
+                                        {% endif %}
+                                    </div>
+                                    
+                                    <div class="card-body d-flex flex-column">
+                                        <h5 class="card-title text-primary">{{ ingresso.evento.nome }}</h5>
+                                        <p class="card-text text-muted small mb-3">{{ ingresso.evento.descricao|truncatewords:15 }}</p>
+                                        
+                                        <!-- Event Details -->
+                                        <div class="mb-3">
+                                            <div class="row g-2 small">
+                                                <div class="col-6">
+                                                    <i class="fas fa-calendar text-primary me-1"></i>
+                                                    <strong>{{ ingresso.evento.data|date:"d/m/Y" }}</strong>
+                                                </div>
+                                                <div class="col-6">
+                                                    <i class="fas fa-clock text-primary me-1"></i>
+                                                    <strong>{{ ingresso.evento.horario }}</strong>
+                                                </div>
+                                                <div class="col-12">
+                                                    <i class="fas fa-map-marker-alt text-primary me-1"></i>
+                                                    <strong>{{ ingresso.evento.local.nome }}</strong>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Ticket Info -->
+                                        <div class="card bg-light mb-3">
+                                            <div class="card-body py-2">
+                                                <div class="row g-2 small">
+                                                    <div class="col-6">
+                                                        <strong>Tipo:</strong><br>
+                                                        <span class="badge bg-info">{{ ingresso.get_tipo_display }}</span>
+                                                    </div>
+                                                    <div class="col-6">
+                                                        <strong>Valor:</strong><br>
+                                                        {% if ingresso.valor > 0 %}
+                                                            <span class="text-success fw-bold">R$ {{ ingresso.valor }}</span>
+                                                        {% else %}
+                                                            <span class="text-success fw-bold">Gratuito</span>
+                                                        {% endif %}
+                                                    </div>
+                                                    <div class="col-12">
+                                                        <strong>Código:</strong> 
+                                                        <code class="bg-white px-2 py-1 rounded">{{ ingresso.codigo }}</code>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Action Buttons -->
+                                        <div class="mt-auto">
+                                            <div class="row g-2">
+                                                <div class="col-12">
+                                                    <a href="{% url 'detalhe_evento' ingresso.evento.id %}" class="btn btn-outline-primary btn-sm w-100">
+                                                        <i class="fas fa-info-circle me-1"></i>Ver Detalhes do Evento
+                                                    </a>
+                                                </div>
+                                            </div>
+                                            
+                                            {% if ingresso.evento.data_evento >= today %}
+                                                <div class="row g-2 mt-2">
+                                                    <div class="col-12">
+                                                        <a href="{% url 'cancelar_ingresso' ingresso.id %}" class="btn btn-outline-danger btn-sm w-100">
+                                                            <i class="fas fa-times me-1"></i>Cancelar Ingresso
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            {% else %}
+                                                <div class="row g-2 mt-2">
+                                                    <div class="col-12">
+                                                        <button class="btn btn-outline-secondary btn-sm w-100" disabled>
+                                                            <i class="fas fa-check me-1"></i>Evento Finalizado
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Card Footer -->
+                                    <div class="card-footer bg-light text-center py-2">
+                                        <small class="text-muted">
+                                            <i class="fas fa-calendar-check me-1"></i>
+                                            Inscrito em {{ ingresso.data_inscricao|date:"d/m/Y H:i" }}
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    
+                    <!-- Summary Stats -->
+                    <div class="row mt-4">
+                        <div class="col-md-4">
+                            <div class="card bg-primary text-white">
+                                <div class="card-body text-center">
+                                    <h3 class="mb-0">{{ ingressos|length }}</h3>
+                                    <small>Total de Ingressos</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card bg-success text-white">
+                                <div class="card-body text-center">
+                                    <h3 class="mb-0">{{ ingressos_ativos|length|default:0 }}</h3>
+                                    <small>Eventos Futuros</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card bg-info text-white">
+                                <div class="card-body text-center">
+                                    <h3 class="mb-0">{{ ingressos_finalizados|length|default:0 }}</h3>
+                                    <small>Eventos Concluídos</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                {% else %}
+                    <!-- Empty State -->
+                    <div class="text-center py-5">
+                        <div class="mb-4">
+                            <i class="fas fa-ticket-alt fa-5x text-muted"></i>
+                        </div>
+                        <h3 class="text-muted mb-3">Você ainda não possui ingressos</h3>
+                        <p class="text-muted mb-4">Explore nossos eventos e faça sua primeira inscrição!</p>
+                        
+                        <div class="row justify-content-center">
+                            <div class="col-md-6">
+                                <a href="{% url 'lista_eventos' %}" class="btn btn-primary btn-lg me-3">
+                                    <i class="fas fa-search me-2"></i>Explorar Eventos
+                                </a>
+                                <a href="{% url 'home' %}" class="btn btn-outline-secondary btn-lg">
+                                    <i class="fas fa-home me-2"></i>Página Inicial
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <!-- Suggestions -->
+                        <div class="row mt-5">
+                            <div class="col-md-4">
+                                <div class="card border-0">
+                                    <div class="card-body text-center">
+                                        <i class="fas fa-calendar-plus fa-2x text-primary mb-3"></i>
+                                        <h6>Eventos Variados</h6>
+                                        <p class="small text-muted">Conferências, workshops, palestras e muito mais</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card border-0">
+                                    <div class="card-body text-center">
+                                        <i class="fas fa-users fa-2x text-success mb-3"></i>
+                                        <h6>Networking</h6>
+                                        <p class="small text-muted">Conecte-se com profissionais da sua área</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card border-0">
+                                    <div class="card-body text-center">
+                                        <i class="fas fa-graduation-cap fa-2x text-info mb-3"></i>
+                                        <h6>Aprendizado</h6>
+                                        <p class="small text-muted">Desenvolva novas habilidades e conhecimentos</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .ticket-card {
+        transition: transform 0.2s ease-in-out;
+        border: none;
+    }
+    
+    .ticket-card:hover {
+        transform: translateY(-5px);
+    }
+    
+    .position-absolute {
+        z-index: 10;
+    }
+    
+    code {
+        font-size: 0.8em;
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function downloadTicket(ingressoId) {
+        // Placeholder for PDF download functionality
+        alert('Download do ingresso será implementado em breve!');
+        // In a real implementation:
+        // window.location.href = `/eventos/ingresso/${ingressoId}/pdf/`;
+    }
+    
+    function shareTicket(eventoNome, eventoData) {
+        if (navigator.share) {
+            navigator.share({
+                title: 'Meu Ingresso - ' + eventoNome,
+                text: 'Vou participar do evento "' + eventoNome + '" no dia ' + eventoData + '!',
+                url: window.location.href
+            }).catch(console.error);
+        } else {
+            // Fallback for browsers that don't support Web Share API
+            const text = 'Vou participar do evento "' + eventoNome + '" no dia ' + eventoData + '!';
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(text).then(() => {
+                    alert('Texto copiado para a área de transferência!');
+                });
+            } else {
+                alert('Compartilhamento não suportado neste navegador.');
+            }
+        }
+    }
+    
+    // Add current date for template context
+    document.addEventListener('DOMContentLoaded', function() {
+        // This would normally be handled in the view
+        const today = new Date();
+        
+        // Add some interactive features
+        const ticketCards = document.querySelectorAll('.ticket-card');
+        ticketCards.forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.boxShadow = '0 8px 25px rgba(0,0,0,0.15)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.boxShadow = '';
+            });
+        });
+    });
+</script>
+{% endblock %}

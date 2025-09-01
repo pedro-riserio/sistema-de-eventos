@@ -1,0 +1,372 @@
+{% extends 'base.html' %}
+
+{% block title %}Contato - EventosPSW{% endblock %}
+
+{% block content %}
+    <!-- Hero Section -->
+    <section class="bg-primary text-white py-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 mx-auto text-center">
+                    <h1 class="display-4 fw-bold mb-3">Entre em Contato</h1>
+                    <p class="lead mb-0">
+                        Estamos aqui para ajudar! Entre em contato conosco e responderemos 
+                        o mais breve possível.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Form Section -->
+    <section class="py-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 mx-auto">
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                                <i class="fas fa-check-circle me-2"></i>{{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+
+                    <div class="card shadow-sm border-0">
+                        <div class="card-body p-4">
+                            <h3 class="card-title mb-4">Envie sua Mensagem</h3>
+                            
+                            <form method="post" id="contatoForm">
+                                {% csrf_token %}
+                                
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label for="{{ form.nome.id_for_label }}" class="form-label">
+                                            Nome Completo <span class="text-danger">*</span>
+                                        </label>
+                                        {{ form.nome }}
+                                        {% if form.nome.errors %}
+                                            <div class="invalid-feedback d-block">
+                                                {{ form.nome.errors.0 }}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                    
+                                    <div class="col-md-6">
+                                        <label for="{{ form.email.id_for_label }}" class="form-label">
+                                            E-mail <span class="text-danger">*</span>
+                                        </label>
+                                        {{ form.email }}
+                                        {% if form.email.errors %}
+                                            <div class="invalid-feedback d-block">
+                                                {{ form.email.errors.0 }}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="{{ form.telefone.id_for_label }}" class="form-label">
+                                        Telefone
+                                    </label>
+                                    {{ form.telefone }}
+                                    {% if form.telefone.errors %}
+                                        <div class="invalid-feedback d-block">
+                                            {{ form.telefone.errors.0 }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="{{ form.assunto.id_for_label }}" class="form-label">
+                                        Assunto <span class="text-danger">*</span>
+                                    </label>
+                                    {{ form.assunto }}
+                                    {% if form.assunto.errors %}
+                                        <div class="invalid-feedback d-block">
+                                            {{ form.assunto.errors.0 }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="mb-4">
+                                    <label for="{{ form.mensagem.id_for_label }}" class="form-label">
+                                        Mensagem <span class="text-danger">*</span>
+                                    </label>
+                                    {{ form.mensagem }}
+                                    {% if form.mensagem.errors %}
+                                        <div class="invalid-feedback d-block">
+                                            {{ form.mensagem.errors.0 }}
+                                        </div>
+                                    {% endif %}
+                                    <div class="form-text">
+                                        Descreva detalhadamente sua dúvida, sugestão ou problema.
+                                    </div>
+                                </div>
+                                
+                                <div class="d-grid">
+                                    <button type="submit" class="btn btn-primary btn-lg">
+                                        <i class="fas fa-paper-plane me-2"></i>Enviar Mensagem
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Info Section -->
+    <section class="py-5 bg-light">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 mx-auto">
+                    <h3 class="text-center mb-5">Outras Formas de Contato</h3>
+                    
+                    <div class="row g-4">
+                        <div class="col-md-4">
+                            <div class="card h-100 border-0 shadow-sm">
+                                <div class="card-body text-center p-4">
+                                    <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                                        <i class="fas fa-envelope fa-lg"></i>
+                                    </div>
+                                    <h5 class="card-title">E-mail</h5>
+                                    <p class="card-text text-muted mb-2">contato@eventospsw.com</p>
+                                    <p class="card-text text-muted mb-2">suporte@eventospsw.com</p>
+                                    <small class="text-muted">Resposta em até 24h</small>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <div class="card h-100 border-0 shadow-sm">
+                                <div class="card-body text-center p-4">
+                                    <div class="bg-success text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                                        <i class="fas fa-phone fa-lg"></i>
+                                    </div>
+                                    <h5 class="card-title">Telefone</h5>
+                                    <p class="card-text text-muted mb-2">(11) 3456-7890</p>
+                                    <p class="card-text text-muted mb-2">(11) 98765-4321</p>
+                                    <small class="text-muted">Seg-Sex: 9h às 18h</small>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <div class="card h-100 border-0 shadow-sm">
+                                <div class="card-body text-center p-4">
+                                    <div class="bg-info text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                                        <i class="fas fa-map-marker-alt fa-lg"></i>
+                                    </div>
+                                    <h5 class="card-title">Endereço</h5>
+                                    <p class="card-text text-muted mb-2">
+                                        Rua dos Eventos, 123<br>
+                                        Centro - São Paulo/SP<br>
+                                        CEP: 01234-567
+                                    </p>
+                                    <small class="text-muted">Atendimento presencial com agendamento</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="py-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 mx-auto">
+                    <h3 class="text-center mb-5">Perguntas Frequentes</h3>
+                    
+                    <div class="accordion" id="faqAccordion">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="faq1">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse1">
+                                    Como posso me inscrever em um evento?
+                                </button>
+                            </h2>
+                            <div id="collapse1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    Para se inscrever em um evento, você precisa criar uma conta em nossa plataforma, 
+                                    navegar pelos eventos disponíveis e clicar em "Inscrever-se" no evento desejado. 
+                                    Você precisará completar seu perfil de participante antes da primeira inscrição.
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="faq2">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse2">
+                                    Como posso cancelar minha inscrição?
+                                </button>
+                            </h2>
+                            <div id="collapse2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    Você pode cancelar sua inscrição acessando "Meus Ingressos" em sua conta e 
+                                    clicando em "Cancelar Inscrição" no evento desejado. Observe que alguns eventos 
+                                    podem ter políticas específicas de cancelamento.
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="faq3">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse3">
+                                    Como organizar um evento na plataforma?
+                                </button>
+                            </h2>
+                            <div id="collapse3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    Para organizar um evento, entre em contato conosco através deste formulário ou 
+                                    pelos nossos canais de atendimento. Nossa equipe irá orientá-lo sobre o processo 
+                                    de criação e publicação do seu evento.
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="faq4">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse4">
+                                    Posso alterar meus dados após a inscrição?
+                                </button>
+                            </h2>
+                            <div id="collapse4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    Sim, você pode alterar seus dados pessoais acessando seu perfil na plataforma. 
+                                    Recomendamos manter suas informações sempre atualizadas para receber comunicações 
+                                    importantes sobre os eventos.
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="faq5">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse5">
+                                    Como recebo meu certificado de participação?
+                                </button>
+                            </h2>
+                            <div id="collapse5" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    Os certificados são emitidos automaticamente após a conclusão do evento, 
+                                    quando aplicável. Você receberá um e-mail com o link para download ou 
+                                    poderá acessá-lo através da seção "Meus Ingressos" em sua conta.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Social Media Section -->
+    <section class="py-5 bg-primary text-white">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 mx-auto text-center">
+                    <h3 class="mb-3">Siga-nos nas Redes Sociais</h3>
+                    <p class="mb-4">
+                        Fique por dentro das novidades, eventos especiais e dicas exclusivas.
+                    </p>
+                    
+                    <div class="d-flex justify-content-center gap-3">
+                        <a href="#" class="btn btn-outline-light btn-lg rounded-circle" style="width: 60px; height: 60px;">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="#" class="btn btn-outline-light btn-lg rounded-circle" style="width: 60px; height: 60px;">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="#" class="btn btn-outline-light btn-lg rounded-circle" style="width: 60px; height: 60px;">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="#" class="btn btn-outline-light btn-lg rounded-circle" style="width: 60px; height: 60px;">
+                            <i class="fab fa-linkedin-in"></i>
+                        </a>
+                        <a href="#" class="btn btn-outline-light btn-lg rounded-circle" style="width: 60px; height: 60px;">
+                            <i class="fab fa-youtube"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Máscara para telefone
+        const telefoneInput = document.getElementById('id_telefone');
+        if (telefoneInput) {
+            telefoneInput.addEventListener('input', function(e) {
+                let value = e.target.value.replace(/\D/g, '');
+                if (value.length <= 11) {
+                    if (value.length <= 10) {
+                        value = value.replace(/(\d{2})(\d{4})(\d{4})/, '($1) $2-$3');
+                    } else {
+                        value = value.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
+                    }
+                }
+                e.target.value = value;
+            });
+        }
+
+        // Validação do formulário
+        const form = document.getElementById('contatoForm');
+        if (form) {
+            form.addEventListener('submit', function(e) {
+                const nome = document.getElementById('id_nome').value.trim();
+                const email = document.getElementById('id_email').value.trim();
+                const assunto = document.getElementById('id_assunto').value.trim();
+                const mensagem = document.getElementById('id_mensagem').value.trim();
+
+                if (!nome || !email || !assunto || !mensagem) {
+                    e.preventDefault();
+                    alert('Por favor, preencha todos os campos obrigatórios.');
+                    return false;
+                }
+
+                // Validação básica de email
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(email)) {
+                    e.preventDefault();
+                    alert('Por favor, insira um e-mail válido.');
+                    return false;
+                }
+            });
+        }
+
+        // Contador de caracteres para mensagem
+        const mensagemTextarea = document.getElementById('id_mensagem');
+        if (mensagemTextarea) {
+            const maxLength = 1000;
+            const counter = document.createElement('div');
+            counter.className = 'form-text text-end';
+            counter.innerHTML = `<span id="charCount">0</span>/${maxLength} caracteres`;
+            mensagemTextarea.parentNode.appendChild(counter);
+
+            mensagemTextarea.addEventListener('input', function() {
+                const currentLength = this.value.length;
+                document.getElementById('charCount').textContent = currentLength;
+                
+                if (currentLength > maxLength * 0.9) {
+                    counter.classList.add('text-warning');
+                } else {
+                    counter.classList.remove('text-warning');
+                }
+                
+                if (currentLength >= maxLength) {
+                    counter.classList.add('text-danger');
+                    counter.classList.remove('text-warning');
+                } else {
+                    counter.classList.remove('text-danger');
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,174 @@
+{% extends 'base.html' %}
+
+{% block title %}EventosPSW - Sistema de Eventos{% endblock %}
+
+{% block content %}
+    <!-- Banner principal -->
+    <header class="hero-section py-5 text-white text-center" style="background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://source.unsplash.com/random/1920x1080/?event') no-repeat center center; background-size: cover; height: 80vh; display: flex; align-items: center;">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 mx-auto">
+                    <h1 class="display-4 fw-bold mb-4">Encontre os Melhores Eventos</h1>
+                    <p class="lead mb-4">Descubra, participe e organize eventos incríveis em sua região</p>
+                    <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+                        <a href="{% url 'lista_eventos' %}" class="btn btn-primary btn-lg px-4 me-sm-3">Ver Eventos</a>
+                        {% if user.is_authenticated %}
+                            <a href="{% url 'criar_perfil' %}" class="btn btn-outline-light btn-lg px-4">Meu Perfil</a>
+                        {% else %}
+                            <a href="{% url 'registro' %}" class="btn btn-outline-light btn-lg px-4">Criar Conta</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Seção de busca -->
+    <section class="py-4 bg-light">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-10 mx-auto">
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+                            <form method="get" action="{% url 'lista_eventos' %}" class="row g-3">
+                                <div class="col-md-4">
+                                    <label for="tipo" class="form-label">Tipo de Evento</label>
+                                    <select class="form-select" name="tipo" id="tipo">
+                                        <option value="todos">Todos</option>
+                                        <option value="conferencia">Conferências</option>
+                                        <option value="workshop">Workshops</option>
+                                        <option value="festa">Festas</option>
+                                        <option value="exposicao">Exposições</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="data" class="form-label">Data</label>
+                                    <input type="date" class="form-control" name="data" id="data">
+                                </div>
+                                <div class="col-md-4 d-flex align-items-end">
+                                    <button type="submit" class="btn btn-primary w-100">Buscar Eventos</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Seção de eventos em destaque -->
+    <section id="eventos" class="py-5">
+        <div class="container">
+            <h2 class="text-center mb-5">Eventos em Destaque</h2>
+            <div class="row g-4">
+                {% for evento in eventos_destaque %}
+                    <div class="col-md-4">
+                        <div class="card h-100 shadow-sm">
+                            <img src="https://source.unsplash.com/random/600x400/?{{ evento.get_tipo_display|lower }}" class="card-img-top" alt="{{ evento.nome }}">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span class="badge bg-{% if evento.tipo == 'conferencia' %}primary{% elif evento.tipo == 'workshop' %}success{% elif evento.tipo == 'festa' %}danger{% else %}warning{% endif %}">{{ evento.get_tipo_display }}</span>
+                                    <small class="text-muted"><i class="bi bi-calendar3 me-1"></i> {{ evento.data|date:"d/m/Y" }}</small>
+                                </div>
+                                <h5 class="card-title">{{ evento.nome }}</h5>
+                                <p class="card-text">{{ evento.descricao|truncatewords:15 }}</p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <i class="bi bi-geo-alt text-muted me-1"></i>
+                                        <small class="text-muted">{{ evento.local.nome }}</small>
+                                    </div>
+                                    <a href="{% url 'detalhe_evento' evento.id %}" class="btn btn-sm btn-outline-primary">Ver detalhes</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% empty %}
+                    <div class="col-12 text-center">
+                        <p class="text-muted">Nenhum evento em destaque no momento.</p>
+                        <a href="{% url 'lista_eventos' %}" class="btn btn-primary">Ver Todos os Eventos</a>
+                    </div>
+                {% endfor %}
+            </div>
+            {% if eventos_destaque %}
+                <div class="text-center mt-5">
+                    <a href="{% url 'lista_eventos' %}" class="btn btn-primary">Ver Todos os Eventos</a>
+                </div>
+            {% endif %}
+        </div>
+    </section>
+
+    <!-- Seção de categorias -->
+    <section class="py-5 bg-light">
+        <div class="container">
+            <h2 class="text-center mb-5">Categorias de Eventos</h2>
+            <div class="row g-4 text-center">
+                <div class="col-md-3 col-6">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body">
+                            <div class="icon-box mb-3">
+                                <i class="bi bi-laptop fa-3x text-primary"></i>
+                            </div>
+                            <h5>Conferências</h5>
+                            <p class="small text-muted">Eventos profissionais e acadêmicos</p>
+                            <a href="{% url 'lista_eventos' %}?tipo=conferencia" class="btn btn-sm btn-outline-primary">Ver eventos</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body">
+                            <div class="icon-box mb-3">
+                                <i class="bi bi-mortarboard fa-3x text-success"></i>
+                            </div>
+                            <h5>Workshops</h5>
+                            <p class="small text-muted">Aprenda novas habilidades</p>
+                            <a href="{% url 'lista_eventos' %}?tipo=workshop" class="btn btn-sm btn-outline-success">Ver eventos</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body">
+                            <div class="icon-box mb-3">
+                                <i class="bi bi-music-note fa-3x text-danger"></i>
+                            </div>
+                            <h5>Festas</h5>
+                            <p class="small text-muted">Celebrações e eventos sociais</p>
+                            <a href="{% url 'lista_eventos' %}?tipo=festa" class="btn btn-sm btn-outline-danger">Ver eventos</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body">
+                            <div class="icon-box mb-3">
+                                <i class="bi bi-palette fa-3x text-warning"></i>
+                            </div>
+                            <h5>Exposições</h5>
+                            <p class="small text-muted">Arte, cultura e ciência</p>
+                            <a href="{% url 'lista_eventos' %}?tipo=exposicao" class="btn btn-sm btn-outline-warning">Ver eventos</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Newsletter -->
+    <section class="py-5 bg-primary text-white">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6 mb-4 mb-lg-0">
+                    <h3 class="mb-0">Inscreva-se em nossa Newsletter</h3>
+                    <p class="mb-0">Receba as últimas novidades sobre eventos em sua região</p>
+                </div>
+                <div class="col-lg-6">
+                    <form class="d-flex">
+                        <input type="email" class="form-control me-2" placeholder="Seu email" required>
+                        <button type="submit" class="btn btn-light">Inscrever</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

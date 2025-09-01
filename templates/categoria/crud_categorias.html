@@ -1,0 +1,124 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Gerenciar Categorias{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+            <div class="d-flex justify-content-between align-items-center">
+                <h4 class="mb-0">
+                    <i class="bi bi-tags me-2"></i>Gerenciar Categorias
+                </h4>
+                <a href="{% url 'criar_categoria' %}" class="btn btn-light btn-sm">
+                    <i class="bi bi-plus-circle me-1"></i>Nova Categoria
+                </a>
+            </div>
+        </div>
+        <div class="card-body">
+            <!-- Filtro de busca -->
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <form method="get" class="d-flex">
+                        <input type="text" name="busca" class="form-control me-2" 
+                               placeholder="Buscar por nome ou tipo..." 
+                               value="{{ busca_atual }}">
+                        <button type="submit" class="btn btn-outline-primary">
+                            <i class="bi bi-search"></i>
+                        </button>
+                        {% if busca_atual %}
+                        <a href="{% url 'lista_categorias' %}" class="btn btn-outline-secondary ms-2">
+                            <i class="bi bi-x"></i>
+                        </a>
+                        {% endif %}
+                    </form>
+                </div>
+            </div>
+            
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th><i class="bi bi-tag me-1"></i>Nome</th>
+                            <th><i class="bi bi-bookmark me-1"></i>Tipo</th>
+                            <th><i class="bi bi-gear me-1"></i>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for categoria in page_obj %}
+                        <tr>
+                            <td><strong>{{ categoria.nome }}</strong></td>
+                            <td><span class="badge bg-info">{{ categoria.tipo }}</span></td>
+                            <td>
+                                <div class="btn-group btn-group-sm" role="group">
+                                    <a href="{% url 'editar_categoria' categoria.id %}" class="btn btn-outline-primary">
+                                        <i class="bi bi-pencil"></i> Editar
+                                    </a>
+                                    <a href="{% url 'excluir_categoria' categoria.id %}" class="btn btn-outline-danger">
+                                        <i class="bi bi-trash"></i> Excluir
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="3" class="text-center text-muted py-4">
+                                <i class="bi bi-tags fs-1 d-block mb-2"></i>
+                                {% if busca_atual %}
+                                    <p class="mb-0">Nenhuma categoria encontrada para "{{ busca_atual }}"</p>
+                                {% else %}
+                                    <p class="mb-0">Nenhuma categoria encontrada</p>
+                                    <a href="{% url 'criar_categoria' %}" class="btn btn-primary mt-2">
+                                        <i class="bi bi-plus"></i> Criar Primeira Categoria
+                                    </a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Paginação -->
+            {% if page_obj.has_other_pages %}
+            <nav aria-label="Paginação de categorias">
+                <ul class="pagination justify-content-center">
+                    {% if page_obj.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page=1{% if busca_atual %}&busca={{ busca_atual }}{% endif %}">
+                                <i class="bi bi-chevron-double-left"></i>
+                            </a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if busca_atual %}&busca={{ busca_atual }}{% endif %}">
+                                <i class="bi bi-chevron-left"></i>
+                            </a>
+                        </li>
+                    {% endif %}
+                    
+                    <li class="page-item active">
+                        <span class="page-link">
+                            {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
+                        </span>
+                    </li>
+                    
+                    {% if page_obj.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if busca_atual %}&busca={{ busca_atual }}{% endif %}">
+                                <i class="bi bi-chevron-right"></i>
+                            </a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if busca_atual %}&busca={{ busca_atual }}{% endif %}">
+                                <i class="bi bi-chevron-double-right"></i>
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

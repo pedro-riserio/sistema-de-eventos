@@ -1,0 +1,130 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Sistema de Eventos{% endblock %}</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome para ícones -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'home' %}">EventosPSW</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}" href="{% url 'home' %}">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'lista_eventos' %}active{% endif %}" href="{% url 'lista_eventos' %}">Eventos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'sobre' %}active{% endif %}" href="{% url 'sobre' %}">Sobre</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'contato' %}active{% endif %}" href="{% url 'contato' %}">Contato</a>
+                    </li>
+                    {% if user.is_authenticated %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-user"></i> {{ user.first_name|default:user.username }}
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="{% url 'criar_perfil' %}"><i class="fas fa-user-edit"></i> Meu Perfil</a></li>
+                                <li><a class="dropdown-item" href="{% url 'meus_ingressos' %}"><i class="fas fa-ticket-alt"></i> Meus Ingressos</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                {% if user.is_staff %}
+                                    <li><a class="dropdown-item" href="/admin/"><i class="fas fa-cog"></i> Admin</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                {% endif %}
+                                <li><a class="dropdown-item" href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Sair</a></li>
+                            </ul>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link btn btn-primary ms-lg-3 text-white" href="{% url 'login' %}">Login</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mensagens -->
+    {% if messages %}
+        <div class="container mt-3">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <!-- Conteúdo principal -->
+    {% block content %}
+    {% endblock %}
+
+    <!-- Footer -->
+    <footer class="py-5 bg-dark text-white">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-lg-4">
+                    <h5>EventosPSW</h5>
+                    <p>Conectando pessoas através de experiências memoráveis desde 2023.</p>
+                    <div class="social-links">
+                        <a href="#" class="text-white me-2"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="text-white me-2"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-white me-2"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="text-white"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-4">
+                    <h5>Links Rápidos</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="{% url 'home' %}" class="text-white text-decoration-none">Home</a></li>
+                        <li class="mb-2"><a href="{% url 'lista_eventos' %}" class="text-white text-decoration-none">Eventos</a></li>
+                        <li class="mb-2"><a href="{% url 'sobre' %}" class="text-white text-decoration-none">Sobre</a></li>
+                        <li><a href="{% url 'contato' %}" class="text-white text-decoration-none">Contato</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-2 col-md-4">
+                    <h5>Categorias</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="{% url 'lista_eventos' %}?tipo=conferencia" class="text-white text-decoration-none">Conferências</a></li>
+                        <li class="mb-2"><a href="{% url 'lista_eventos' %}?tipo=workshop" class="text-white text-decoration-none">Workshops</a></li>
+                        <li class="mb-2"><a href="{% url 'lista_eventos' %}?tipo=festa" class="text-white text-decoration-none">Festas</a></li>
+                        <li><a href="{% url 'lista_eventos' %}?tipo=exposicao" class="text-white text-decoration-none">Exposições</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-4 col-md-4">
+                    <h5>Informações Legais</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="#" class="text-white text-decoration-none">Termos de Uso</a></li>
+                        <li class="mb-2"><a href="#" class="text-white text-decoration-none">Política de Privacidade</a></li>
+                        <li><a href="#" class="text-white text-decoration-none">FAQ</a></li>
+                    </ul>
+                </div>
+            </div>
+            <hr class="my-4">
+            <div class="text-center">
+                <p class="mb-0">&copy; 2023 EventosPSW. Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

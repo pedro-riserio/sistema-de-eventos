@@ -1,0 +1,175 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Sistema de Eventos{% endblock %}</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    
+    <!-- Custom CSS for Blue and White Theme -->
+    <style>
+        :root {
+            --primary-blue: #0d6efd;
+            --light-blue: #e7f1ff;
+            --dark-blue: #0a58ca;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-blue);
+            border-color: var(--primary-blue);
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--dark-blue);
+            border-color: var(--dark-blue);
+        }
+        
+        .card {
+            border: 1px solid #dee2e6;
+            box-shadow: 0 0.125rem 0.25rem rgba(13, 110, 253, 0.075);
+        }
+        
+        .table-light {
+            background-color: var(--light-blue);
+        }
+        
+        .badge.bg-info {
+            background-color: var(--light-blue) !important;
+            color: var(--dark-blue) !important;
+        }
+        
+        .text-primary {
+            color: var(--primary-blue) !important;
+        }
+        
+        .border-primary {
+            border-color: var(--primary-blue) !important;
+        }
+        
+        .navbar-brand {
+            font-weight: bold;
+        }
+        
+        .btn-outline-primary {
+            color: var(--primary-blue);
+            border-color: var(--primary-blue);
+        }
+        
+        .btn-outline-primary:hover {
+            background-color: var(--primary-blue);
+            border-color: var(--primary-blue);
+        }
+    </style>
+    
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'home' %}">
+                <i class="bi bi-calendar-event"></i> EventosPSW
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'home' %}"><i class="bi bi-house"></i> Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'lista_eventos' %}"><i class="bi bi-calendar3"></i> Eventos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'sobre' %}"><i class="bi bi-info-circle"></i> Sobre</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'contato' %}"><i class="bi bi-envelope"></i> Contato</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav">
+                    {% if user.is_authenticated %}
+                        {% if is_palestrante %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'painel_palestrante' %}"><i class="bi bi-speedometer2"></i> Painel</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'meus_eventos' %}"><i class="bi bi-calendar-check"></i> Meus Eventos</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'criar_evento' %}"><i class="bi bi-plus-circle"></i> Criar Evento</a>
+                            </li>
+                        {% elif is_cliente %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'meus_ingressos' %}"><i class="bi bi-ticket"></i> Meus Ingressos</a>
+                            </li>
+                        {% endif %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'criar_perfil' %}"><i class="bi bi-person"></i> Meu Perfil</a>
+                        </li>
+                        {% if user.is_staff %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="/admin/"><i class="bi bi-gear"></i> Admin</a>
+                            </li>
+                        {% endif %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                                <i class="bi bi-person-circle"></i> {{ user.first_name|default:user.username }}
+                                {% if user_profile %}
+                                    <small class="text-muted">({{ user_profile.get_tipo_usuario_display }})</small>
+                                {% endif %}
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="{% url 'logout' %}"><i class="bi bi-box-arrow-right"></i> Sair</a></li>
+                            </ul>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'login' %}"><i class="bi bi-box-arrow-in-right"></i> Login</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'registro' %}"><i class="bi bi-person-plus"></i> Cadastrar</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'cadastrar_palestrante' %}"><i class="bi bi-person-badge"></i> Ser Palestrante</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mensagens -->
+    {% if messages %}
+        <div class="container mt-3">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+    <!-- Conteúdo principal -->
+    <main class="container my-4">
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-primary text-white text-center py-4 mt-5">
+        <div class="container">
+            <p class="mb-0">&copy; 2023 EventosPSW. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

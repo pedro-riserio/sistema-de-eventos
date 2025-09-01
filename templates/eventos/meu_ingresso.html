@@ -1,0 +1,277 @@
+{% extends 'base.html' %}
+
+{% block title %}Meu Ingresso - {{ ingresso.evento.nome }} - EventosPSW{% endblock %}
+
+{% block content %}
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <!-- Ticket Card -->
+                <div class="card shadow-lg border-0 ticket-card">
+                    <div class="card-header bg-gradient-primary text-white text-center py-4">
+                        <h2 class="mb-0"><i class="fas fa-ticket-alt me-2"></i>Ingresso Confirmado</h2>
+                        <p class="mb-0 opacity-75">Apresente este ingresso no dia do evento</p>
+                    </div>
+                    
+                    <div class="card-body p-0">
+                        <!-- Event Image -->
+                        {% if ingresso.evento.imagem %}
+                            <div class="ticket-image">
+                                <img src="{{ ingresso.evento.imagem.url }}" class="w-100" style="height: 200px; object-fit: cover;" alt="{{ ingresso.evento.nome }}">
+                            </div>
+                        {% endif %}
+                        
+                        <div class="p-4">
+                            <!-- Event Details -->
+                            <div class="row mb-4">
+                                <div class="col-md-8">
+                                    <h3 class="text-primary mb-2">{{ ingresso.evento.nome }}</h3>
+                                    <p class="text-muted mb-3">{{ ingresso.evento.descricao|truncatewords:20 }}</p>
+                                    
+                                    <div class="row g-3">
+                                        <div class="col-sm-6">
+                                            <div class="d-flex align-items-center">
+                                                <i class="fas fa-calendar text-primary me-2"></i>
+                                                <div>
+                                                    <small class="text-muted d-block">Data</small>
+                                                    <strong>{{ ingresso.evento.data|date:"d/m/Y" }}</strong>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="col-sm-6">
+                                            <div class="d-flex align-items-center">
+                                                <i class="fas fa-clock text-primary me-2"></i>
+                                                <div>
+                                                    <small class="text-muted d-block">Horário</small>
+                                                    <strong>{{ ingresso.evento.horario }}</strong>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="col-sm-6">
+                                            <div class="d-flex align-items-center">
+                                                <i class="fas fa-map-marker-alt text-primary me-2"></i>
+                                                <div>
+                                                    <small class="text-muted d-block">Local</small>
+                                                    <strong>{{ ingresso.evento.local.nome }}</strong>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="col-sm-6">
+                                            <div class="d-flex align-items-center">
+                                                <i class="fas fa-tag text-primary me-2"></i>
+                                                <div>
+                                                    <small class="text-muted d-block">Tipo</small>
+                                                    <strong>{{ ingresso.evento.get_tipo_display }}</strong>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-4 text-center">
+                                    <!-- QR Code Placeholder -->
+                                    <div class="qr-code-container p-3 border rounded bg-light">
+                                        <div class="qr-code" style="width: 120px; height: 120px; margin: 0 auto; background: #000; position: relative;">
+                                            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-size: 12px; text-align: center;">
+                                                QR CODE<br>
+                                                <small>{{ ingresso.id }}</small>
+                                            </div>
+                                        </div>
+                                        <small class="text-muted d-block mt-2">Código de Verificação</small>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Ticket Information -->
+                            <div class="row mb-4">
+                                <div class="col-md-6">
+                                    <div class="card bg-light">
+                                        <div class="card-body">
+                                            <h6 class="card-title"><i class="fas fa-user me-2"></i>Participante</h6>
+                                            <p class="card-text mb-1"><strong>{{ ingresso.participante.nome }}</strong></p>
+                                            <p class="card-text mb-1">{{ ingresso.participante.email }}</p>
+                                            <p class="card-text mb-0">{{ ingresso.participante.telefone }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <div class="card bg-light">
+                                        <div class="card-body">
+                                            <h6 class="card-title"><i class="fas fa-info-circle me-2"></i>Detalhes do Ingresso</h6>
+                                            <p class="card-text mb-1">
+                                                <strong>Tipo:</strong> {{ ingresso.get_tipo_display }}
+                                            </p>
+                                            <p class="card-text mb-1">
+                                                <strong>Valor:</strong> 
+                                                {% if ingresso.valor > 0 %}
+                                                    R$ {{ ingresso.valor }}
+                                                {% else %}
+                                                    Gratuito
+                                                {% endif %}
+                                            </p>
+                                            <p class="card-text mb-0">
+                                                <strong>Confirmado em:</strong> {{ ingresso.data_inscricao|date:"d/m/Y H:i" }}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Location Details -->
+                            <div class="card bg-light mb-4">
+                                <div class="card-body">
+                                    <h6 class="card-title"><i class="fas fa-map-marked-alt me-2"></i>Endereço do Evento</h6>
+                                    <p class="card-text mb-1"><strong>{{ ingresso.evento.local.nome }}</strong></p>
+                                    <p class="card-text mb-1">{{ ingresso.evento.local.endereco }}</p>
+                                    <p class="card-text mb-0">
+                                        Capacidade: {{ ingresso.evento.local.capacidade }} pessoas
+                                    </p>
+                                </div>
+                            </div>
+                            
+                            <!-- Speakers -->
+                            {% if ingresso.evento.palestrantes.all %}
+                                <div class="card bg-light mb-4">
+                                    <div class="card-body">
+                                        <h6 class="card-title"><i class="fas fa-microphone me-2"></i>Palestrantes</h6>
+                                        <div class="row">
+                                            {% for palestrante in ingresso.evento.palestrantes.all %}
+                                                <div class="col-md-6 mb-2">
+                                                    <div class="d-flex align-items-center">
+                                                        <div class="speaker-avatar me-3">
+                                                            <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                                                {{ palestrante.nome|first }}
+                                                            </div>
+                                                        </div>
+                                                        <div>
+                                                            <strong>{{ palestrante.nome }}</strong><br>
+                                                            <small class="text-muted">{{ palestrante.tema }}</small>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endif %}
+                            
+                            <!-- Important Notes -->
+                            <div class="alert alert-info">
+                                <h6 class="alert-heading"><i class="fas fa-exclamation-circle me-2"></i>Informações Importantes</h6>
+                                <ul class="mb-0">
+                                    <li>Apresente este ingresso (impresso ou digital) na entrada do evento</li>
+                                    <li>Chegue com pelo menos 15 minutos de antecedência</li>
+                                    <li>Traga um documento de identificação com foto</li>
+                                    <li>Em caso de dúvidas, entre em contato conosco</li>
+                                </ul>
+                            </div>
+                            
+                            <!-- Action Buttons -->
+                            <div class="row mt-4">
+                                <div class="col-md-4">
+                                    <a href="{% url 'detalhe_evento' ingresso.evento.id %}" class="btn btn-outline-primary w-100">
+                                        <i class="fas fa-info-circle me-2"></i>Detalhes do Evento
+                                    </a>
+                                </div>
+                                <div class="col-md-4">
+                                    <button onclick="window.print()" class="btn btn-outline-secondary w-100">
+                                        <i class="fas fa-print me-2"></i>Imprimir Ingresso
+                                    </button>
+                                </div>
+                                <div class="col-md-4">
+                                    <button onclick="downloadTicket()" class="btn btn-primary w-100">
+                                        <i class="fas fa-download me-2"></i>Baixar PDF
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Ticket Footer -->
+                    <div class="card-footer bg-light text-center py-3">
+                        <small class="text-muted">
+                            <i class="fas fa-shield-alt me-1"></i>
+                            Ingresso válido apenas para o evento especificado • EventosPSW © 2024
+                        </small>
+                    </div>
+                </div>
+                
+                <!-- Back to Events -->
+                <div class="text-center mt-4">
+                    <a href="{% url 'lista_eventos' %}" class="btn btn-link">
+                        <i class="fas fa-arrow-left me-2"></i>Voltar para Lista de Eventos
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .ticket-card {
+        border-radius: 15px;
+        overflow: hidden;
+    }
+    
+    .bg-gradient-primary {
+        background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+    }
+    
+    .qr-code {
+        background-image: 
+            repeating-linear-gradient(0deg, transparent, transparent 2px, #333 2px, #333 4px),
+            repeating-linear-gradient(90deg, transparent, transparent 2px, #333 2px, #333 4px);
+    }
+    
+    @media print {
+        .container {
+            max-width: none !important;
+        }
+        
+        .btn, .alert {
+            display: none !important;
+        }
+        
+        .card {
+            border: 2px solid #000 !important;
+            box-shadow: none !important;
+        }
+        
+        .card-header {
+            background: #000 !important;
+            color: #fff !important;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function downloadTicket() {
+        // Placeholder for PDF download functionality
+        alert('Funcionalidade de download em PDF será implementada em breve!');
+        
+        // In a real implementation, you would:
+        // 1. Make an AJAX request to generate PDF
+        // 2. Download the generated PDF file
+        // Example:
+        // window.location.href = `/eventos/ingresso/${ingresso.id}/pdf/`;
+    }
+    
+    // Auto-focus on print button for accessibility
+    document.addEventListener('DOMContentLoaded', function() {
+        // Add some interactive features
+        const qrCode = document.querySelector('.qr-code');
+        if (qrCode) {
+            qrCode.addEventListener('click', function() {
+                alert('Código do ingresso: {{ ingresso.id }}');
+            });
+        }
+    });
+</script>
+{% endblock %}

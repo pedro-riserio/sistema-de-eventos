@@ -1,0 +1,228 @@
+{% extends 'base.html' %}
+
+{% block title %}Completar Perfil - EventosPSW{% endblock %}
+
+{% block content %}
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+                <div class="card shadow">
+                    <div class="card-header bg-info text-white">
+                        <h3 class="mb-0"><i class="fas fa-user-edit me-2"></i>Completar Perfil</h3>
+                        <p class="mb-0">Complete suas informações para se inscrever em eventos</p>
+                    </div>
+                    <div class="card-body p-4">
+                        {% if form.errors %}
+                            <div class="alert alert-danger">
+                                <h6 class="alert-heading">Corrija os erros abaixo:</h6>
+                                <ul class="mb-0">
+                                    {% for field, errors in form.errors.items %}
+                                        {% for error in errors %}
+                                            <li>{{ error }}</li>
+                                        {% endfor %}
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        {% endif %}
+
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i>
+                            <strong>Por que precisamos dessas informações?</strong><br>
+                            Estes dados são necessários para gerar seus ingressos e entrar em contato caso necessário.
+                        </div>
+
+                        <form method="post">
+                            {% csrf_token %}
+                            
+                            <div class="mb-3">
+                                <label for="{{ form.nome.id_for_label }}" class="form-label">Nome Completo *</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                    {{ form.nome }}
+                                </div>
+                                {% if form.nome.help_text %}
+                                    <div class="form-text">{{ form.nome.help_text }}</div>
+                                {% endif %}
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="{{ form.email.id_for_label }}" class="form-label">E-mail *</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                                    {{ form.email }}
+                                </div>
+                                <div class="form-text">Será usado para envio de confirmações e atualizações sobre eventos.</div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="{{ form.telefone.id_for_label }}" class="form-label">Telefone *</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-phone"></i></span>
+                                    {{ form.telefone }}
+                                </div>
+                                <div class="form-text">Formato: (11) 99999-9999</div>
+                            </div>
+
+                            <div class="mb-4">
+                                <label for="{{ form.cpf.id_for_label }}" class="form-label">CPF *</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-id-card"></i></span>
+                                    {{ form.cpf }}
+                                </div>
+                                <div class="form-text">Necessário para identificação na entrada dos eventos.</div>
+                            </div>
+
+                            <div class="mb-3 form-check">
+                                <input type="checkbox" class="form-check-input" id="acceptPrivacy" required>
+                                <label class="form-check-label" for="acceptPrivacy">
+                                    Aceito que meus dados sejam utilizados conforme a 
+                                    <a href="#" class="text-decoration-none">Política de Privacidade</a> *
+                                </label>
+                            </div>
+
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-info btn-lg">
+                                    <i class="fas fa-save me-2"></i>Salvar Perfil
+                                </button>
+                                <a href="{% url 'home' %}" class="btn btn-outline-secondary">
+                                    <i class="fas fa-arrow-left me-2"></i>Voltar
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                
+                <!-- Help Section -->
+                <div class="card mt-4">
+                    <div class="card-body">
+                        <h6 class="card-title"><i class="fas fa-question-circle me-2"></i>Precisa de Ajuda?</h6>
+                        <p class="card-text mb-2">
+                            <strong>Seus dados estão seguros:</strong> Utilizamos criptografia para proteger suas informações pessoais.
+                        </p>
+                        <p class="card-text mb-2">
+                            <strong>Posso alterar depois?</strong> Sim, você pode editar seu perfil a qualquer momento.
+                        </p>
+                        <p class="card-text mb-0">
+                            <strong>Dúvidas?</strong> Entre em contato conosco através da 
+                            <a href="{% url 'contato' %}" class="text-decoration-none">página de contato</a>.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Máscara para telefone
+        const telefoneInput = document.getElementById('{{ form.telefone.id_for_label }}');
+        if (telefoneInput) {
+            telefoneInput.addEventListener('input', function() {
+                let value = this.value.replace(/\D/g, '');
+                if (value.length >= 11) {
+                    value = value.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
+                } else if (value.length >= 7) {
+                    value = value.replace(/(\d{2})(\d{4})(\d{0,4})/, '($1) $2-$3');
+                } else if (value.length >= 3) {
+                    value = value.replace(/(\d{2})(\d{0,5})/, '($1) $2');
+                } else if (value.length >= 1) {
+                    value = value.replace(/(\d{0,2})/, '($1');
+                }
+                this.value = value;
+            });
+        }
+
+        // Máscara para CPF
+        const cpfInput = document.getElementById('{{ form.cpf.id_for_label }}');
+        if (cpfInput) {
+            cpfInput.addEventListener('input', function() {
+                let value = this.value.replace(/\D/g, '');
+                if (value.length >= 9) {
+                    value = value.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+                } else if (value.length >= 6) {
+                    value = value.replace(/(\d{3})(\d{3})(\d{0,3})/, '$1.$2.$3');
+                } else if (value.length >= 3) {
+                    value = value.replace(/(\d{3})(\d{0,3})/, '$1.$2');
+                }
+                this.value = value;
+            });
+        }
+
+        // Validação de CPF
+        if (cpfInput) {
+            cpfInput.addEventListener('blur', function() {
+                const cpf = this.value.replace(/\D/g, '');
+                if (cpf.length === 11 && !validarCPF(cpf)) {
+                    this.classList.add('is-invalid');
+                    let feedback = this.parentElement.parentElement.querySelector('.invalid-feedback');
+                    if (!feedback) {
+                        feedback = document.createElement('div');
+                        feedback.className = 'invalid-feedback';
+                        this.parentElement.parentElement.appendChild(feedback);
+                    }
+                    feedback.textContent = 'CPF inválido';
+                } else {
+                    this.classList.remove('is-invalid');
+                    const feedback = this.parentElement.parentElement.querySelector('.invalid-feedback');
+                    if (feedback) {
+                        feedback.remove();
+                    }
+                }
+            });
+        }
+
+        // Função para validar CPF
+        function validarCPF(cpf) {
+            if (cpf.length !== 11 || /^(\d)\1{10}$/.test(cpf)) {
+                return false;
+            }
+
+            let soma = 0;
+            for (let i = 0; i < 9; i++) {
+                soma += parseInt(cpf.charAt(i)) * (10 - i);
+            }
+            let resto = 11 - (soma % 11);
+            let dv1 = resto < 2 ? 0 : resto;
+
+            if (parseInt(cpf.charAt(9)) !== dv1) {
+                return false;
+            }
+
+            soma = 0;
+            for (let i = 0; i < 10; i++) {
+                soma += parseInt(cpf.charAt(i)) * (11 - i);
+            }
+            resto = 11 - (soma % 11);
+            let dv2 = resto < 2 ? 0 : resto;
+
+            return parseInt(cpf.charAt(10)) === dv2;
+        }
+
+        // Validação do formulário
+        const form = document.querySelector('form');
+        if (form) {
+            form.addEventListener('submit', function(e) {
+                const requiredFields = form.querySelectorAll('[required]');
+                let isValid = true;
+
+                requiredFields.forEach(field => {
+                    if (!field.value.trim()) {
+                        field.classList.add('is-invalid');
+                        isValid = false;
+                    } else {
+                        field.classList.remove('is-invalid');
+                        field.classList.add('is-valid');
+                    }
+                });
+
+                if (!isValid) {
+                    e.preventDefault();
+                    alert('Por favor, preencha todos os campos obrigatórios.');
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}

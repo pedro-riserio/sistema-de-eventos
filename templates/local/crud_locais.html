@@ -1,0 +1,148 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Gerenciar Locais{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="bi bi-geo-alt me-2"></i>Gerenciar Locais</h2>
+        <a href="{% url 'criar_local' %}" class="btn btn-primary">
+            <i class="bi bi-plus-lg me-1"></i>Novo Local
+        </a>
+    </div>
+    
+    <!-- Filtro de Busca -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="get" class="row g-3">
+                <div class="col-md-10">
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-search"></i></span>
+                        <input type="text" class="form-control" name="busca" value="{{ busca_atual }}" placeholder="Buscar por nome ou endereço...">
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-outline-primary w-100">
+                        <i class="bi bi-funnel me-1"></i>Filtrar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="card shadow">
+        <div class="card-header bg-light">
+            <h5 class="mb-0">Lista de Locais</h5>
+        </div>
+        <div class="card-body p-0">
+            {% if page_obj %}
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Nome</th>
+                                <th>Endereço</th>
+                                <th>Capacidade</th>
+                                <th class="text-center">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for local in page_obj %}
+                            <tr>
+                                <td>{{ local.nome }}</td>
+                                <td>{{ local.endereco }}</td>
+                                <td><span class="badge bg-info">{{ local.capacidade }} pessoas</span></td>
+                                <td class="text-center">
+                                    <div class="btn-group btn-group-sm" role="group">
+                                        <a href="{% url 'editar_local' local.id %}" class="btn btn-outline-primary" title="Editar">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <a href="{% url 'excluir_local' local.id %}" class="btn btn-outline-danger" title="Excluir">
+                                            <i class="bi bi-trash"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Paginação -->
+                {% if page_obj.has_other_pages %}
+                <nav aria-label="Navegação de páginas" class="mt-3">
+                    <ul class="pagination justify-content-center">
+                        {% if page_obj.has_previous %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page=1{% if busca_atual %}&busca={{ busca_atual }}{% endif %}">&laquo; Primeira</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if busca_atual %}&busca={{ busca_atual }}{% endif %}">Anterior</a>
+                            </li>
+                        {% endif %}
+                        
+                        <li class="page-item active">
+                            <span class="page-link">{{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+                        </li>
+                        
+                        {% if page_obj.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if busca_atual %}&busca={{ busca_atual }}{% endif %}">Próxima</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if busca_atual %}&busca={{ busca_atual }}{% endif %}">Última &raquo;</a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+                {% endif %}
+            {% else %}
+                <div class="text-center py-5">
+                    <i class="bi bi-geo-alt text-muted" style="font-size: 3rem;"></i>
+                    <h5 class="text-muted mt-3">Nenhum local encontrado</h5>
+                    <p class="text-muted">Comece criando seu primeiro local.</p>
+                    <a href="{% url 'criar_local' %}" class="btn btn-primary">
+                        <i class="bi bi-plus-lg me-1"></i>Novo Local
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <!-- Paginação -->
+    {% if locais.has_other_pages %}
+    <nav aria-label="Navegação de páginas" class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if locais.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?{% if request.GET.busca %}busca={{ request.GET.busca }}&{% endif %}page={{ locais.previous_page_number }}">
+                        <i class="bi bi-chevron-left"></i> Anterior
+                    </a>
+                </li>
+            {% endif %}
+            
+            {% for num in locais.paginator.page_range %}
+                {% if locais.number == num %}
+                    <li class="page-item active">
+                        <span class="page-link">{{ num }}</span>
+                    </li>
+                {% elif num > locais.number|add:'-3' and num < locais.number|add:'3' %}
+                    <li class="page-item">
+                        <a class="page-link" href="?{% if request.GET.busca %}busca={{ request.GET.busca }}&{% endif %}page={{ num }}">{{ num }}</a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+            
+            {% if locais.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?{% if request.GET.busca %}busca={{ request.GET.busca }}&{% endif %}page={{ locais.next_page_number }}">
+                        Próxima <i class="bi bi-chevron-right"></i>
+                    </a>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+</div>
+{% endblock %}

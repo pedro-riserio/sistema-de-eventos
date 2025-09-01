@@ -1,0 +1,214 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ evento.nome }} - EventosPSW{% endblock %}
+
+{% block content %}
+    <!-- Header do evento -->
+    <div class="position-relative">
+        <div class="hero-image" style="background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://source.unsplash.com/random/1920x600/?{{ evento.get_tipo_display|lower }}') no-repeat center center; background-size: cover; height: 400px;"></div>
+        <div class="position-absolute top-50 start-50 translate-middle text-white text-center w-100">
+            <div class="container">
+                <span class="badge bg-{% if evento.tipo == 'conferencia' %}primary{% elif evento.tipo == 'workshop' %}success{% elif evento.tipo == 'festa' %}danger{% else %}warning{% endif %} mb-2 fs-6">{{ evento.get_tipo_display }}</span>
+                <h1 class="display-4 fw-bold mb-3">{{ evento.nome }}</h1>
+                <p class="lead">{{ evento.local.nome }} • {{ evento.data|date:"d/m/Y" }} • {{ evento.horario }}</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Conteúdo principal -->
+    <section class="py-5">
+        <div class="container">
+            <div class="row">
+                <!-- Informações do evento -->
+                <div class="col-lg-8">
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-body">
+                            <h3 class="card-title mb-4">Sobre o Evento</h3>
+                            <p class="card-text">{{ evento.descricao|linebreaks }}</p>
+                        </div>
+                    </div>
+
+                    <!-- Palestrantes -->
+                    {% if evento.palestrantes.all %}
+                        <div class="card shadow-sm mb-4">
+                            <div class="card-body">
+                                <h3 class="card-title mb-4">Palestrantes</h3>
+                                <div class="row g-3">
+                                    {% for palestrante in evento.palestrantes.all %}
+                                        <div class="col-md-6">
+                                            <div class="d-flex align-items-center">
+                                                <img src="https://source.unsplash.com/random/80x80/?portrait" class="rounded-circle me-3" width="60" height="60" alt="{{ palestrante.nome }}">
+                                                <div>
+                                                    <h5 class="mb-1">{{ palestrante.nome }}</h5>
+                                                    <p class="text-muted mb-0 small">{{ palestrante.biografia|truncatewords:15 }}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    <!-- Local -->
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-body">
+                            <h3 class="card-title mb-4">Local do Evento</h3>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h5>{{ evento.local.nome }}</h5>
+                                    <p class="text-muted mb-2">
+                                        <i class="bi bi-geo-alt me-2"></i>
+                                        {{ evento.local.endereco }}
+                                    </p>
+                                    <p class="text-muted mb-2">
+                                        <i class="bi bi-people me-2"></i>
+                                        Capacidade: {{ evento.local.capacidade }} pessoas
+                                    </p>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="bg-light p-3 rounded">
+                                        <i class="bi bi-map fa-2x text-muted"></i>
+                                        <p class="small text-muted mt-2 mb-0">Mapa do local seria exibido aqui</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sidebar -->
+                <div class="col-lg-4">
+                    <!-- Card de inscrição -->
+                    <div class="card shadow-sm mb-4 sticky-top" style="top: 100px;">
+                        <div class="card-body">
+                            <div class="text-center mb-3">
+                                {% if evento.valor > 0 %}
+                                    <h3 class="text-success mb-0">R$ {{ evento.valor }}</h3>
+                                    <small class="text-muted">por pessoa</small>
+                                {% else %}
+                                    <h3 class="text-success mb-0">Gratuito</h3>
+                                {% endif %}
+                            </div>
+
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span class="text-muted">Vagas disponíveis:</span>
+                                    <span class="fw-bold">{{ evento.vagas_disponiveis }}</span>
+                                </div>
+                                <div class="progress" style="height: 8px;">
+                                    <div class="progress-bar bg-{% if evento.vagas_disponiveis > 10 %}success{% elif evento.vagas_disponiveis > 5 %}warning{% else %}danger{% endif %}" 
+                                         style="width: {{ evento.percentual_ocupacao }}%"></div>
+                                </div>
+                            </div>
+
+                            {% if user.is_authenticated %}
+                                {% if user_profile and user_profile.tipo_usuario == 'cliente' %}
+                                    {% if ja_inscrito %}
+                                        <div class="alert alert-success text-center">
+                                            <i class="bi bi-check-circle me-2"></i>
+                                            Você já possui ingresso!
+                                        </div>
+                                        <a href="{% url 'meus_ingressos' %}" class="btn btn-outline-primary w-100">
+                                            <i class="bi bi-ticket me-2"></i>Ver Meu Ingresso
+                                        </a>
+                                    {% elif evento.vagas_disponiveis > 0 %}
+                                        <a href="{% url 'comprar_ingresso' evento.id %}" class="btn btn-success w-100 btn-lg">
+                                            <i class="bi bi-cart me-2"></i>Comprar Ingresso
+                                        </a>
+                                    {% else %}
+                                        <button class="btn btn-secondary w-100 btn-lg" disabled>
+                                            <i class="bi bi-x me-2"></i>Esgotado
+                                        </button>
+                                    {% endif %}
+                                {% elif user_profile and user_profile.tipo_usuario == 'palestrante' %}
+                                    <div class="alert alert-info text-center">
+                                        <i class="bi bi-mic me-2"></i>
+                                        Você é um palestrante
+                                    </div>
+                                    <a href="{% url 'meus_eventos' %}" class="btn btn-outline-primary w-100">
+                                        <i class="bi bi-calendar me-2"></i>Meus Eventos
+                                    </a>
+                                {% else %}
+                                    <div class="alert alert-warning text-center">
+                                        <i class="bi bi-person-gear me-2"></i>
+                                        Complete seu perfil para continuar
+                                    </div>
+                                    <a href="{% url 'criar_perfil' %}" class="btn btn-primary w-100">
+                                        <i class="bi bi-person-plus me-2"></i>Completar Perfil
+                                    </a>
+                                {% endif %}
+                            {% else %}
+                                <div class="text-center mb-3">
+                                    <p class="small text-muted">Faça login para comprar ingressos</p>
+                                </div>
+                                <a href="{% url 'login' %}?next={% url 'detalhe_evento' evento.id %}" class="btn btn-primary w-100">
+                                    <i class="bi bi-box-arrow-in-right me-2"></i>Fazer Login
+                                </a>
+                                <a href="{% url 'registro' %}" class="btn btn-outline-primary w-100 mt-2">
+                                    <i class="bi bi-person-plus me-2"></i>Criar Conta
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Informações adicionais -->
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title mb-3">Informações</h5>
+                            <div class="mb-3">
+                                <i class="bi bi-calendar3 text-muted me-2"></i>
+                                <strong>Data:</strong> {{ evento.data|date:"d/m/Y" }}
+                            </div>
+                            <div class="mb-3">
+                                <i class="bi bi-clock text-muted me-2"></i>
+                                <strong>Horário:</strong> {{ evento.horario }}
+                            </div>
+                            <div class="mb-3">
+                                <i class="bi bi-geo-alt text-muted me-2"></i>
+                                <strong>Local:</strong> {{ evento.local.nome }}
+                            </div>
+                            <div class="mb-3">
+                                <i class="bi bi-people text-muted me-2"></i>
+                                <strong>Capacidade:</strong> {{ evento.local.capacidade }} pessoas
+                            </div>
+                            {% if evento.palestrantes.all %}
+                                <div class="mb-3">
+                                    <i class="bi bi-mic text-muted me-2"></i>
+                                    <strong>Palestrantes:</strong> {{ evento.palestrantes.count }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Eventos relacionados -->
+    {% if eventos_relacionados %}
+        <section class="py-5 bg-light">
+            <div class="container">
+                <h3 class="text-center mb-5">Eventos Relacionados</h3>
+                <div class="row g-4">
+                    {% for evento_rel in eventos_relacionados %}
+                        <div class="col-md-4">
+                            <div class="card h-100 shadow-sm">
+                                <img src="https://source.unsplash.com/random/600x300/?{{ evento_rel.get_tipo_display|lower }}" class="card-img-top" alt="{{ evento_rel.nome }}" style="height: 200px; object-fit: cover;">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <span class="badge bg-{% if evento_rel.tipo == 'conferencia' %}primary{% elif evento_rel.tipo == 'workshop' %}success{% elif evento_rel.tipo == 'festa' %}danger{% else %}warning{% endif %}">{{ evento_rel.get_tipo_display }}</span>
+                                        <small class="text-muted">{{ evento_rel.data|date:"d/m/Y" }}</small>
+                                    </div>
+                                    <h5 class="card-title">{{ evento_rel.nome }}</h5>
+                                    <p class="card-text text-muted small">{{ evento_rel.descricao|truncatewords:15 }}</p>
+                                    <a href="{% url 'detalhe_evento' evento_rel.id %}" class="btn btn-sm btn-outline-primary">Ver detalhes</a>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+    {% endif %}
+{% endblock %}

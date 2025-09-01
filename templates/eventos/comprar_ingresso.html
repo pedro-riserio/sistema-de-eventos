@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Comprar Ingresso - {{ evento.nome }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="mb-0">Confirmar Compra de Ingresso</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            {% if evento.imagem %}
+                                <img src="{{ evento.imagem.url }}" class="img-fluid rounded" alt="{{ evento.nome }}">
+                            {% else %}
+                                <div class="bg-light rounded d-flex align-items-center justify-content-center" style="height: 200px;">
+                                    <i class="fas fa-calendar-alt fa-3x text-muted"></i>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-8">
+                            <h4>{{ evento.nome }}</h4>
+                            <p class="text-muted">{{ evento.descricao|truncatewords:30 }}</p>
+                            
+                            <div class="row mb-3">
+                                <div class="col-sm-6">
+                                    <strong><i class="fas fa-calendar"></i> Data:</strong><br>
+                                    {{ evento.data_evento|date:"d/m/Y" }}
+                                </div>
+                                <div class="col-sm-6">
+                                    <strong><i class="fas fa-map-marker-alt"></i> Local:</strong><br>
+                                    {{ evento.local.nome }}
+                                </div>
+                            </div>
+                            
+                            <div class="row mb-3">
+                                <div class="col-sm-6">
+                                    <strong><i class="fas fa-tag"></i> Categoria:</strong><br>
+                                    {{ evento.categoria.nome }}
+                                </div>
+                                <div class="col-sm-6">
+                                    <strong><i class="fas fa-users"></i> Vagas Disponíveis:</strong><br>
+                                    {{ evento.vagas_disponiveis }}
+                                </div>
+                            </div>
+                            
+                            <div class="alert alert-info">
+                                <h5 class="alert-heading"><i class="fas fa-money-bill-wave"></i> Valor do Ingresso</h5>
+                                <h3 class="mb-0">R$ {{ evento.preco }}</h3>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <hr>
+                    
+                    <div class="text-center">
+                        <h5>Confirmar Compra</h5>
+                        <p class="text-muted">Ao confirmar, você estará adquirindo um ingresso para este evento.</p>
+                        
+                        <form method="post">
+                            {% csrf_token %}
+                            <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                                <a href="{% url 'detalhe_evento' evento.id %}" class="btn btn-secondary me-md-2">
+                                    <i class="fas fa-arrow-left"></i> Voltar
+                                </a>
+                                <button type="submit" class="btn btn-success btn-lg">
+                                    <i class="fas fa-shopping-cart"></i> Confirmar Compra - R$ {{ evento.preco }}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

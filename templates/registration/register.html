@@ -1,0 +1,430 @@
+{% extends 'base.html' %}
+
+{% block title %}Cadastro - EventosPSW{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow-sm border-0">
+                <div class="card-body p-5">
+                    <div class="text-center mb-4">
+                        <i class="fas fa-user-plus fa-3x text-primary mb-3"></i>
+                        <h3 class="card-title">Criar Conta</h3>
+                        <p class="text-muted">Cadastre-se para gerenciar eventos</p>
+                    </div>
+
+                    {% if form.errors %}
+                        <div class="alert alert-danger" role="alert">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            <strong>Erro no cadastro:</strong>
+                            <ul class="mb-0 mt-2">
+                                {% for field, errors in form.errors.items %}
+                                    {% for error in errors %}
+                                        <li>{{ error }}</li>
+                                    {% endfor %}
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    {% endif %}
+
+                    <form method="post" id="registerForm">
+                        {% csrf_token %}
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.first_name.id_for_label }}" class="form-label">
+                                    <i class="fas fa-user me-2"></i>Nome *
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text">
+                                        <i class="fas fa-user"></i>
+                                    </span>
+                                    {{ form.first_name }}
+                                </div>
+                                {% if form.first_name.errors %}
+                                    <div class="text-danger mt-1">
+                                        {% for error in form.first_name.errors %}
+                                            <small>{{ error }}</small>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.last_name.id_for_label }}" class="form-label">
+                                    <i class="fas fa-user me-2"></i>Sobrenome *
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text">
+                                        <i class="fas fa-user"></i>
+                                    </span>
+                                    {{ form.last_name }}
+                                </div>
+                                {% if form.last_name.errors %}
+                                    <div class="text-danger mt-1">
+                                        {% for error in form.last_name.errors %}
+                                            <small>{{ error }}</small>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.username.id_for_label }}" class="form-label">
+                                <i class="fas fa-at me-2"></i>Nome de Usuário *
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text">
+                                    <i class="fas fa-at"></i>
+                                </span>
+                                {{ form.username }}
+                            </div>
+                            <div class="form-text">Apenas letras, números e os caracteres @/./+/-/_ são permitidos.</div>
+                            {% if form.username.errors %}
+                                <div class="text-danger mt-1">
+                                    {% for error in form.username.errors %}
+                                        <small>{{ error }}</small>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.email.id_for_label }}" class="form-label">
+                                <i class="fas fa-envelope me-2"></i>Email *
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text">
+                                    <i class="fas fa-envelope"></i>
+                                </span>
+                                {{ form.email }}
+                            </div>
+                            {% if form.email.errors %}
+                                <div class="text-danger mt-1">
+                                    {% for error in form.email.errors %}
+                                        <small>{{ error }}</small>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.password1.id_for_label }}" class="form-label">
+                                <i class="fas fa-lock me-2"></i>Senha *
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text">
+                                    <i class="fas fa-lock"></i>
+                                </span>
+                                {{ form.password1 }}
+                                <button class="btn btn-outline-secondary" type="button" id="togglePassword1">
+                                    <i class="fas fa-eye" id="eyeIcon1"></i>
+                                </button>
+                            </div>
+                            {% if form.password1.help_text %}
+                                <div class="form-text">{{ form.password1.help_text }}</div>
+                            {% endif %}
+                            <div class="mt-2">
+                                <div class="progress" style="height: 5px;">
+                                    <div class="progress-bar" id="passwordStrength" role="progressbar" style="width: 0%"></div>
+                                </div>
+                                <small class="text-muted" id="strengthText">Digite uma senha</small>
+                            </div>
+                            {% if form.password1.errors %}
+                                <div class="text-danger mt-1">
+                                    {% for error in form.password1.errors %}
+                                        <small>{{ error }}</small>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="{{ form.password2.id_for_label }}" class="form-label">
+                                <i class="fas fa-check-double me-2"></i>Confirmar Senha *
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text">
+                                    <i class="fas fa-check-double"></i>
+                                </span>
+                                {{ form.password2 }}
+                                <button class="btn btn-outline-secondary" type="button" id="togglePassword2">
+                                    <i class="fas fa-eye" id="eyeIcon2"></i>
+                                </button>
+                            </div>
+                            <div class="form-text" id="passwordMatch"></div>
+                            {% if form.password2.errors %}
+                                <div class="text-danger mt-1">
+                                    {% for error in form.password2.errors %}
+                                        <small>{{ error }}</small>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="agreeTerms" required>
+                                <label class="form-check-label" for="agreeTerms">
+                                    Eu concordo com os 
+                                    <a href="#" class="text-decoration-none" data-bs-toggle="modal" data-bs-target="#termsModal">
+                                        Termos de Uso
+                                    </a> e 
+                                    <a href="#" class="text-decoration-none" data-bs-toggle="modal" data-bs-target="#privacyModal">
+                                        Política de Privacidade
+                                    </a>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="d-grid mb-3">
+                            <button type="submit" class="btn btn-primary btn-lg" id="registerBtn">
+                                <i class="fas fa-user-plus me-2"></i>Criar Conta
+                            </button>
+                        </div>
+                    </form>
+
+                    <hr class="my-4">
+
+                    <div class="text-center">
+                        <p class="mb-0">
+                            Já tem uma conta?
+                            <a href="{% url 'login' %}" class="text-decoration-none fw-bold">
+                                Faça login aqui
+                            </a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card com informações de segurança -->
+            <div class="card mt-4 border-0 bg-light">
+                <div class="card-body p-4">
+                    <h6 class="text-center text-muted mb-3">
+                        <i class="fas fa-shield-alt me-2"></i>Segurança dos Dados
+                    </h6>
+                    <div class="row g-2">
+                        <div class="col-md-6">
+                            <small class="text-muted">
+                                <i class="fas fa-lock text-success me-1"></i>Dados criptografados
+                            </small>
+                        </div>
+                        <div class="col-md-6">
+                            <small class="text-muted">
+                                <i class="fas fa-user-shield text-success me-1"></i>Privacidade protegida
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Termos de Uso -->
+<div class="modal fade" id="termsModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Termos de Uso</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <h6>1. Aceitação dos Termos</h6>
+                <p>Ao usar nossa plataforma, você concorda com estes termos de uso.</p>
+                
+                <h6>2. Uso da Plataforma</h6>
+                <p>Você se compromete a usar a plataforma de forma responsável e legal.</p>
+                
+                <h6>3. Responsabilidades do Usuário</h6>
+                <p>Você é responsável por manter suas credenciais seguras e por todas as atividades em sua conta.</p>
+                
+                <h6>4. Propriedade Intelectual</h6>
+                <p>Todo o conteúdo da plataforma é protegido por direitos autorais.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Política de Privacidade -->
+<div class="modal fade" id="privacyModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Política de Privacidade</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <h6>1. Coleta de Dados</h6>
+                <p>Coletamos apenas os dados necessários para o funcionamento da plataforma.</p>
+                
+                <h6>2. Uso dos Dados</h6>
+                <p>Seus dados são usados exclusivamente para melhorar sua experiência na plataforma.</p>
+                
+                <h6>3. Compartilhamento</h6>
+                <p>Não compartilhamos seus dados pessoais com terceiros sem seu consentimento.</p>
+                
+                <h6>4. Segurança</h6>
+                <p>Implementamos medidas de segurança para proteger seus dados.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Adicionar classes Bootstrap aos campos
+        const fields = ['first_name', 'last_name', 'username', 'email', 'password1', 'password2'];
+        fields.forEach(fieldName => {
+            const field = document.getElementById(`id_${fieldName}`);
+            if (field) {
+                field.className = 'form-control';
+                field.autocomplete = fieldName === 'password1' ? 'new-password' : fieldName;
+            }
+        });
+
+        // Definir placeholders
+        const placeholders = {
+            'id_first_name': 'Digite seu nome',
+            'id_last_name': 'Digite seu sobrenome',
+            'id_username': 'Digite um nome de usuário',
+            'id_email': 'Digite seu email',
+            'id_password1': 'Digite uma senha segura',
+            'id_password2': 'Confirme sua senha'
+        };
+        
+        Object.entries(placeholders).forEach(([id, placeholder]) => {
+            const field = document.getElementById(id);
+            if (field) field.placeholder = placeholder;
+        });
+
+        // Toggle de visibilidade das senhas
+        function setupPasswordToggle(passwordId, toggleId, iconId) {
+            const passwordField = document.getElementById(passwordId);
+            const toggleBtn = document.getElementById(toggleId);
+            const eyeIcon = document.getElementById(iconId);
+            
+            if (toggleBtn && passwordField && eyeIcon) {
+                toggleBtn.addEventListener('click', function() {
+                    if (passwordField.type === 'password') {
+                        passwordField.type = 'text';
+                        eyeIcon.className = 'fas fa-eye-slash';
+                    } else {
+                        passwordField.type = 'password';
+                        eyeIcon.className = 'fas fa-eye';
+                    }
+                });
+            }
+        }
+        
+        setupPasswordToggle('id_password1', 'togglePassword1', 'eyeIcon1');
+        setupPasswordToggle('id_password2', 'togglePassword2', 'eyeIcon2');
+
+        // Verificador de força da senha
+        const password1 = document.getElementById('id_password1');
+        if (password1) {
+            password1.addEventListener('input', function() {
+                const password = this.value;
+                const strengthBar = document.getElementById('passwordStrength');
+                const strengthText = document.getElementById('strengthText');
+                
+                let strength = 0;
+                let text = 'Muito fraca';
+                let color = 'bg-danger';
+                
+                if (password.length >= 8) strength += 25;
+                if (/[a-z]/.test(password)) strength += 25;
+                if (/[A-Z]/.test(password)) strength += 25;
+                if (/[0-9]/.test(password)) strength += 12.5;
+                if (/[^A-Za-z0-9]/.test(password)) strength += 12.5;
+                
+                if (strength >= 75) {
+                    text = 'Forte';
+                    color = 'bg-success';
+                } else if (strength >= 50) {
+                    text = 'Média';
+                    color = 'bg-warning';
+                } else if (strength >= 25) {
+                    text = 'Fraca';
+                    color = 'bg-danger';
+                }
+                
+                strengthBar.className = `progress-bar ${color}`;
+                strengthBar.style.width = strength + '%';
+                strengthText.textContent = text;
+            });
+        }
+
+        // Verificador de confirmação de senha
+        const password2 = document.getElementById('id_password2');
+        if (password2) {
+            password2.addEventListener('input', function() {
+                const matchDiv = document.getElementById('passwordMatch');
+                const registerBtn = document.getElementById('registerBtn');
+                
+                if (this.value === password1.value && this.value.length > 0) {
+                    matchDiv.innerHTML = '<i class="fas fa-check text-success me-1"></i>Senhas coincidem';
+                    matchDiv.className = 'form-text text-success';
+                } else if (this.value.length > 0) {
+                    matchDiv.innerHTML = '<i class="fas fa-times text-danger me-1"></i>Senhas não coincidem';
+                    matchDiv.className = 'form-text text-danger';
+                } else {
+                    matchDiv.innerHTML = '';
+                }
+            });
+        }
+
+        // Validação do formulário
+        const form = document.getElementById('registerForm');
+        if (form) {
+            form.addEventListener('submit', function(e) {
+                const agreeTerms = document.getElementById('agreeTerms');
+                
+                if (!agreeTerms.checked) {
+                    e.preventDefault();
+                    alert('Você deve concordar com os Termos de Uso e Política de Privacidade.');
+                    agreeTerms.focus();
+                    return false;
+                }
+                
+                if (password1.value !== password2.value) {
+                    e.preventDefault();
+                    alert('As senhas não coincidem. Por favor, verifique e tente novamente.');
+                    password2.focus();
+                    return false;
+                }
+                
+                // Mostrar loading no botão
+                const registerBtn = document.getElementById('registerBtn');
+                if (registerBtn) {
+                    registerBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Criando conta...';
+                    registerBtn.disabled = true;
+                }
+            });
+        }
+
+        // Animação de entrada
+        const card = document.querySelector('.card');
+        if (card) {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            
+            setTimeout(() => {
+                card.style.transition = 'all 0.5s ease';
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            }, 100);
+        }
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Cancelar Ingresso - {{ ingresso.evento.nome }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-warning">
+                    <h3 class="mb-0">Cancelar Ingresso</h3>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-warning">
+                        <h5 class="alert-heading"><i class="fas fa-exclamation-triangle"></i> Atenção!</h5>
+                        <p class="mb-0">Você está prestes a cancelar seu ingresso. Esta ação não pode ser desfeita.</p>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-4">
+                            {% if ingresso.evento.imagem %}
+                                <img src="{{ ingresso.evento.imagem.url }}" class="img-fluid rounded" alt="{{ ingresso.evento.nome }}">
+                            {% else %}
+                                <div class="bg-light rounded d-flex align-items-center justify-content-center" style="height: 200px;">
+                                    <i class="fas fa-calendar-alt fa-3x text-muted"></i>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-8">
+                            <h4>{{ ingresso.evento.nome }}</h4>
+                            <p class="text-muted">{{ ingresso.evento.descricao|truncatewords:30 }}</p>
+                            
+                            <div class="row mb-3">
+                                <div class="col-sm-6">
+                                    <strong><i class="fas fa-calendar"></i> Data:</strong><br>
+                                    {{ ingresso.evento.data_evento|date:"d/m/Y" }}
+                                </div>
+                                <div class="col-sm-6">
+                                    <strong><i class="fas fa-map-marker-alt"></i> Local:</strong><br>
+                                    {{ ingresso.evento.local.nome }}
+                                </div>
+                            </div>
+                            
+                            <div class="row mb-3">
+                                <div class="col-sm-6">
+                                    <strong><i class="fas fa-money-bill-wave"></i> Valor Pago:</strong><br>
+                                    R$ {{ ingresso.preco_pago }}
+                                </div>
+                                <div class="col-sm-6">
+                                    <strong><i class="fas fa-calendar-plus"></i> Data da Compra:</strong><br>
+                                    {{ ingresso.data_compra|date:"d/m/Y H:i" }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <hr>
+                    
+                    <div class="text-center">
+                        <h5 class="text-danger">Confirmar Cancelamento</h5>
+                        <p class="text-muted">Tem certeza que deseja cancelar este ingresso?</p>
+                        
+                        <form method="post">
+                            {% csrf_token %}
+                            <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                                <a href="{% url 'meus_ingressos' %}" class="btn btn-secondary me-md-2">
+                                    <i class="fas fa-arrow-left"></i> Voltar
+                                </a>
+                                <button type="submit" class="btn btn-danger">
+                                    <i class="fas fa-trash"></i> Confirmar Cancelamento
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

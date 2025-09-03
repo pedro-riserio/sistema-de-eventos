@@ -1,22 +1,20 @@
 from django.urls import path
 from django.contrib.auth import views as auth_views
-from eventos import views as eventos_views
+from . import views
 
 app_name = 'usuario'
 
 urlpatterns = [
     # Funcionalidades de usuário
-    path('perfil/', eventos_views.criar_perfil, name='criar_perfil'),
-    path('meus-ingressos/', eventos_views.meus_ingressos, name='meus_ingressos'),
+    path('perfil/', views.criar_perfil, name='criar_perfil'),
+    path('meus-ingressos/', views.meus_ingressos, name='meus_ingressos'),
     
-    # Funcionalidades de palestrante
-    path('cadastrar-palestrante/', eventos_views.cadastrar_palestrante, name='cadastrar_palestrante'),
-    path('painel-palestrante/', eventos_views.painel_palestrante, name='painel_palestrante'),
+    # Funcionalidades de palestrante removidas - agora gerenciadas pelo admin
     
     # Autenticação
     path('login/', auth_views.LoginView.as_view(template_name='registration/login.html'), name='login'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
-    path('registro/', eventos_views.registro, name='registro'),
+    path('registro/', views.registro, name='registro'),
     
     # Reset de senha
     path('password_reset/', auth_views.PasswordResetView.as_view(template_name='registration/password_reset.html'), name='password_reset'),

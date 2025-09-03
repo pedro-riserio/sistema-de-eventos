@@ -5,7 +5,7 @@ from decimal import Decimal
 from eventos.models import Evento
 
 class TipoIngresso(models.Model):
-    """Modelo para tipos de ingressos que podem ser criados pelos palestrantes"""
+    """Modelo para tipos de ingressos que podem ser criados pelos usuários"""
     TIPO_CHOICES = [
         ('V', 'VIP'),
         ('N', 'Normal'),

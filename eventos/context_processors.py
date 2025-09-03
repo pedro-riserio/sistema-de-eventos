@@ -1,4 +1,4 @@
-from usuario.models import UserProfile
+from usuario.models import Usuario
 
 def user_profile(request):
     """
@@ -7,19 +7,23 @@ def user_profile(request):
     """
     context = {
         'user_profile': None,
-        'is_palestrante': False,
+        # Funcionalidade de palestrante removida
         'is_cliente': False,
     }
     
     if request.user.is_authenticated:
         try:
-            profile = UserProfile.objects.get(user=request.user)
+            profile = Usuario.objects.get(id=request.user.id)
             context.update({
                 'user_profile': profile,
-                'is_palestrante': profile.tipo_usuario == 'palestrante',
-                'is_cliente': profile.tipo_usuario == 'cliente',
+                # Funcionalidade de palestrante removida
+                'is_cliente': request.user.groups.filter(name='participante').exists(),
             })
-        except UserProfile.DoesNotExist:
-            pass
+        except Usuario.DoesNotExist:
+            profile = request.user
+            context.update({
+                'user_profile': profile,
+                'is_cliente': request.user.groups.filter(name='participante').exists(),
+            })
     
     return context

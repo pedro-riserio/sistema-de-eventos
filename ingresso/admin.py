@@ -4,11 +4,10 @@ from .models_crud import TipoIngresso
 
 @admin.register(Ingresso)
 class IngressoAdmin(admin.ModelAdmin):
-    list_display = ['codigo', 'evento', 'participante', 'tipo', 'valor', 'data_compra']
-    search_fields = ['codigo', 'evento__nome', 'participante__username']
-    list_filter = ['tipo', 'data_compra', 'evento']
-    readonly_fields = ['codigo', 'data_compra']
-    date_hierarchy = 'data_compra'
+    list_display = ['evento', 'participante', 'tipo', 'valor']
+    search_fields = ['evento__nome', 'participante__username']
+    list_filter = ['tipo', 'evento']
+    readonly_fields = []
 
 @admin.register(TipoIngresso)
 class TipoIngressoAdmin(admin.ModelAdmin):

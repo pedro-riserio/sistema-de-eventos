@@ -18,10 +18,21 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from eventos import views as eventos_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('eventos.urls')),
+    
+    # Páginas principais
+    path('', eventos_views.home, name='home'),
+    path('eventos/', eventos_views.lista_eventos, name='lista_eventos'),
+    path('evento/<int:evento_id>/', eventos_views.detalhe_evento, name='detalhe_evento'),
+    path('sobre/', eventos_views.sobre, name='sobre'),
+    path('contato/', eventos_views.contato, name='contato'),
+    path('inscrever/<int:evento_id>/', eventos_views.inscrever_evento, name='inscrever_evento'),
+    
+    # Apps URLs
+    path('eventos/', include('eventos.urls')),
     path('', include('usuario.urls')),
     path('', include('categoria.urls')),
     path('', include('atividade.urls')),

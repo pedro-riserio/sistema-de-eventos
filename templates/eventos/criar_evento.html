@@ -115,20 +115,7 @@
                                 <div class="form-text">Formatos aceitos: JPG, PNG, GIF. Tamanho máximo: 5MB.</div>
                             </div>
 
-                            <div class="mb-4">
-                                <label class="form-label">Palestrantes</label>
-                                <div id="palestrantes-container">
-                                    <div class="input-group mb-2">
-                                        <span class="input-group-text"><i class="bi bi-mic"></i></span>
-                                        <select class="form-select" name="palestrantes" multiple>
-                                            {% for palestrante in palestrantes %}
-                                                <option value="{{ palestrante.id }}">{{ palestrante.nome }} - {{ palestrante.tema }}</option>
-                                            {% endfor %}
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="form-text">Selecione um ou mais palestrantes para o evento (opcional).</div>
-                            </div>
+
 
                             <div class="row">
                                 <div class="col-md-6">

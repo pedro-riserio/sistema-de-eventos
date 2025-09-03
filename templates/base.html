@@ -94,15 +94,13 @@
                 </ul>
                 <ul class="navbar-nav">
                     {% if user.is_authenticated %}
-                        {% if is_palestrante %}
+                        <!-- Funcionalidade de palestrante removida -->
+                        {% if is_organizador %}
                             <li class="nav-item">
-                                <a class="nav-link" href="{% url 'usuario:painel_palestrante' %}"><i class="bi bi-speedometer2"></i> Painel</a>
+                                <a class="nav-link" href="{% url 'eventos:meus_eventos' %}"><i class="bi bi-calendar-check"></i> Meus Eventos</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="{% url 'meus_eventos' %}"><i class="bi bi-calendar-check"></i> Meus Eventos</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="{% url 'criar_evento' %}"><i class="bi bi-plus-circle"></i> Criar Evento</a>
+                                <a class="nav-link" href="{% url 'eventos:criar_evento' %}"><i class="bi bi-plus-circle"></i> Criar Evento</a>
                             </li>
                         {% elif is_cliente %}
                             <li class="nav-item">
@@ -121,7 +119,7 @@
                             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
                                 <i class="bi bi-person-circle"></i> {{ user.first_name|default:user.username }}
                                 {% if user_profile %}
-                                    <small class="text-muted">({{ user_profile.get_tipo_usuario_display }})</small>
+                                    <small class="text-muted">(Usuário)</small>
                                 {% endif %}
                             </a>
                             <ul class="dropdown-menu">
@@ -136,7 +134,7 @@
                             <a class="nav-link" href="{% url 'usuario:registro' %}"><i class="bi bi-person-plus"></i> Cadastrar</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'usuario:cadastrar_palestrante' %}"><i class="bi bi-person-badge"></i> Ser Palestrante</a>
+                            <!-- Funcionalidade de palestrante removida -->
                         </li>
                     {% endif %}
                 </ul>

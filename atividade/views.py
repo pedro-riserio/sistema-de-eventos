@@ -8,12 +8,12 @@ from .forms import AtividadeForm
 
 
 @login_required
-@permission_required('atividade.view_atividade', raise_exception=True)
+@permission_required('eventos.add_evento', raise_exception=True)
 def lista_atividades(request):
     """Lista todas as atividades com filtros e paginação"""
-    # Filtrar atividades apenas dos eventos do palestrante logado
+    # Filtrar atividades apenas dos eventos do usuário logado
     atividades = Atividade.objects.filter(
-        evento__palestrantes=request.user
+        evento__criador=request.user
     ).select_related('evento', 'responsavel').order_by('-evento__data', 'nome')
     
     # Filtro de busca
@@ -38,7 +38,7 @@ def lista_atividades(request):
     page_obj = paginator.get_page(page_number)
     
     # Eventos para filtro
-    eventos_usuario = request.user.eventos_palestrante.all().order_by('nome')
+    eventos_usuario = request.user.eventos_criados.all().order_by('nome')
     
     context = {
         'page_obj': page_obj,
@@ -73,7 +73,7 @@ def editar_atividade(request, atividade_id):
     atividade = get_object_or_404(
         Atividade, 
         id=atividade_id, 
-        evento__palestrantes=request.user
+        evento__criador=request.user
     )
     
     if request.method == 'POST':
@@ -101,7 +101,7 @@ def excluir_atividade(request, atividade_id):
     atividade = get_object_or_404(
         Atividade, 
         id=atividade_id, 
-        evento__palestrantes=request.user
+        evento__criador=request.user
     )
     
     if request.method == 'POST':

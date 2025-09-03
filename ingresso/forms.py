@@ -37,10 +37,10 @@ class IngressoForm(forms.ModelForm):
         user = kwargs.pop('user', None)
         super().__init__(*args, **kwargs)
         
-        if user and hasattr(user, 'palestrante'):
-            # Filtrar apenas eventos do palestrante logado
+        if user:
+            # Filtrar apenas eventos do usuário logado
             self.fields['evento'].queryset = Evento.objects.filter(
-                palestrante=user.palestrante
+                criador=user
             )
         else:
             self.fields['evento'].queryset = Evento.objects.all()

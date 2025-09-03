@@ -4,13 +4,11 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.http import JsonResponse
 from django.core.paginator import Paginator
 from django.db.models import Q
-from .models import Evento, Palestrante
+from .models import Evento
 from local.models import Local
 from ingresso.models import Ingresso
-from usuario.models import UserProfile
-from usuario.forms import UserProfileForm, CustomUserCreationForm
 from .forms import InscricaoEventoForm, EventoForm
-from .decorators import palestrante_required, cliente_required, profile_required
+from .decorators import cliente_required, profile_required
 from datetime import date
 
 
@@ -114,30 +112,13 @@ def inscrever_evento(request, evento_id):
     return redirect('detalhe_evento', evento_id=evento.id)
 
 
-@login_required
-def criar_perfil(request):
-    """Cria ou edita o perfil do usuário"""
-    try:
-        profile = UserProfile.objects.get(user=request.user)
-        form = UserProfileForm(request.POST or None, instance=profile)
-    except UserProfile.DoesNotExist:
-        form = UserProfileForm(request.POST or None)
-    
-    if request.method == 'POST' and form.is_valid():
-        profile = form.save(commit=False)
-        profile.user = request.user
-        profile.save()
-        messages.success(request, 'Perfil salvo com sucesso!')
-        return redirect('home')
-    
-    context = {'form': form}
-    return render(request, 'eventos/criar_perfil.html', context)
+# View criar_perfil movida para usuario/views.py
 
 
 @login_required
 @permission_required('eventos.add_evento', raise_exception=True)
 def criar_evento(request):
-    """View para criação de eventos - apenas palestrantes"""
+    """View para criação de eventos"""
     if request.method == 'POST':
         form = EventoForm(request.POST)
         if form.is_valid():
@@ -145,20 +126,6 @@ def criar_evento(request):
             # Definir o criador do evento
             evento.criador = request.user
             evento.save()
-            
-            # Criar ou obter palestrante vinculado ao usuário
-            palestrante, created = Palestrante.objects.get_or_create(
-                user=request.user,
-                defaults={
-                    'nome': request.user.get_full_name() or request.user.username,
-                    'biografia': getattr(request.user.profile, 'biografia', '') or 'Palestrante',
-                    'tema': 'Geral',
-                    'horario': '09:00'
-                }
-            )
-            
-            # Adicionar o palestrante ao evento
-            evento.palestrantes.add(palestrante)
             
             messages.success(request, 'Evento criado com sucesso!')
             return redirect('meus_eventos')
@@ -172,18 +139,9 @@ def criar_evento(request):
 @login_required
 @permission_required('eventos.view_evento', raise_exception=True)
 def meus_eventos(request):
-    """View para listar eventos do palestrante logado"""
-    # Buscar eventos criados pelo usuário ou onde ele é palestrante
-    eventos_criados = Evento.objects.filter(criador=request.user)
-    
-    # Buscar eventos onde o usuário é palestrante
-    try:
-        palestrante = Palestrante.objects.get(user=request.user)
-        eventos_palestrante = Evento.objects.filter(palestrantes=palestrante)
-        # Combinar os dois querysets
-        eventos = (eventos_criados | eventos_palestrante).distinct().order_by('-data')
-    except Palestrante.DoesNotExist:
-        eventos = eventos_criados.order_by('-data')
+    """View para listar eventos do usuário logado"""
+    # Buscar eventos criados pelo usuário
+    eventos = Evento.objects.filter(criador=request.user).order_by('-data')
     
     context = {'eventos': eventos}
     return render(request, 'eventos/meus_eventos.html', context)
@@ -192,20 +150,11 @@ def meus_eventos(request):
 @login_required
 @permission_required('eventos.change_evento', raise_exception=True)
 def editar_evento(request, evento_id):
-    """View para edição de eventos - apenas palestrantes que criaram o evento"""
+    """View para edição de eventos - apenas criadores do evento"""
     evento = get_object_or_404(Evento, id=evento_id)
     
-    # Verificar se o usuário é o criador do evento ou palestrante do evento
-    is_creator = evento.criador == request.user
-    is_palestrante = False
-    
-    try:
-        palestrante = Palestrante.objects.get(user=request.user)
-        is_palestrante = palestrante in evento.palestrantes.all()
-    except Palestrante.DoesNotExist:
-        pass
-    
-    if not (is_creator or is_palestrante):
+    # Verificar se o usuário é o criador do evento
+    if evento.criador != request.user:
         messages.error(request, 'Você não tem permissão para editar este evento.')
         return redirect('meus_eventos')
     
@@ -222,72 +171,13 @@ def editar_evento(request, evento_id):
     return render(request, 'eventos/editar_evento.html', context)
 
 
-@cliente_required
-def comprar_ingresso(request, evento_id):
-    """View para compra de ingressos - apenas clientes"""
-    evento = get_object_or_404(Evento, id=evento_id)
-    
-    # Verificar se ainda há vagas disponíveis
-    if evento.vagas_disponiveis <= 0:
-        messages.error(request, 'Este evento não possui mais vagas disponíveis.')
-        return redirect('detalhe_evento', evento_id=evento_id)
-    
-    # Verificar se o usuário já possui ingresso para este evento
-    if Ingresso.objects.filter(participante=request.user, evento=evento).exists():
-        messages.warning(request, 'Você já possui um ingresso para este evento.')
-        return redirect('meus_ingressos')
-    
-    if request.method == 'POST':
-        # Criar o ingresso
-        ingresso = Ingresso.objects.create(
-            participante=request.user,
-            evento=evento,
-            preco_pago=evento.preco
-        )
-        
-        # Reduzir vagas disponíveis
-        evento.vagas_disponiveis -= 1
-        evento.save()
-        
-        messages.success(request, f'Ingresso para "{evento.nome}" comprado com sucesso!')
-        return redirect('meus_ingressos')
-    
-    context = {
-        'evento': evento,
-    }
-    return render(request, 'eventos/comprar_ingresso.html', context)
+# Views comprar_ingresso e cancelar_ingresso movidas para ingresso/views.py
 
 
-@login_required
-def meus_ingressos(request):
-    """Lista os ingressos do usuário"""
-    ingressos = Ingresso.objects.filter(participante=request.user).order_by('-data_compra')
-    
-    context = {'ingressos': ingressos}
-    return render(request, 'eventos/meus_ingressos.html', context)
+# View meus_ingressos movida para usuario/views.py
 
 
-@cliente_required
-def cancelar_ingresso(request, ingresso_id):
-    """View para cancelamento de ingressos - apenas clientes"""
-    ingresso = get_object_or_404(Ingresso, id=ingresso_id, participante=request.user)
-    
-    if request.method == 'POST':
-        evento = ingresso.evento
-        # Aumentar vagas disponíveis
-        evento.vagas_disponiveis += 1
-        evento.save()
-        
-        # Deletar o ingresso
-        ingresso.delete()
-        
-        messages.success(request, f'Ingresso para "{evento.nome}" cancelado com sucesso!')
-        return redirect('meus_ingressos')
-    
-    context = {
-        'ingresso': ingresso,
-    }
-    return render(request, 'eventos/cancelar_ingresso.html', context)
+
 
 
 def sobre(request):
@@ -305,104 +195,10 @@ def contato(request):
     return render(request, 'eventos/contato.html')
 
 
-def registro(request):
-    """Registro de novos usuários"""
-    if request.method == 'POST':
-        form = CustomUserCreationForm(request.POST)
-        if form.is_valid():
-            user = form.save()
-            messages.success(request, 'Conta criada com sucesso! Faça login para continuar.')
-            return redirect('usuario:login')
-    else:
-        form = CustomUserCreationForm()
-    
-    context = {'form': form}
-    return render(request, 'registration/register.html', context)
+# Função de registro movida para usuario/views.py
 
 
-@login_required
-def cadastrar_palestrante(request):
-    """View para usuários se cadastrarem como palestrantes"""
-    # Verificar se o usuário já é palestrante
-    if hasattr(request.user, 'profile') and request.user.profile.tipo_usuario == 'palestrante':
-        messages.info(request, 'Você já está cadastrado como palestrante.')
-        return redirect('usuario:painel_palestrante')
-    
-    if request.method == 'POST':
-        # Atualizar o perfil do usuário para palestrante
-        profile = request.user.profile
-        profile.tipo_usuario = 'palestrante'
-        
-        # Obter dados do formulário
-        biografia = request.POST.get('biografia', '')
-        tema = request.POST.get('tema', 'Geral')
-        horario = request.POST.get('horario', '09:00')
-        
-        profile.biografia = biografia
-        profile.save()
-        
-        # Criar registro de palestrante
-        palestrante, created = Palestrante.objects.get_or_create(
-            user=request.user,
-            defaults={
-                'nome': request.user.get_full_name() or request.user.username,
-                'biografia': biografia,
-                'tema': tema,
-                'horario': horario
-            }
-        )
-        
-        messages.success(request, 'Cadastro como palestrante realizado com sucesso! Agora você pode criar eventos.')
-        return redirect('usuario:painel_palestrante')
-    
-    context = {}
-    return render(request, 'eventos/cadastrar_palestrante.html', context)
+# Função removida - funcionalidade de palestrante agora gerenciada pelo admin
 
 
-@login_required
-@permission_required('eventos.view_evento', raise_exception=True)
-def painel_palestrante(request):
-    """Painel do palestrante com estatísticas e funcionalidades específicas"""
-    from django.db.models import Count, Sum
-    from datetime import date
-    
-    # Busca eventos do palestrante
-    eventos_criados = Evento.objects.filter(criador=request.user)
-    
-    try:
-        palestrante = Palestrante.objects.get(user=request.user)
-        eventos_palestrante = Evento.objects.filter(palestrantes=palestrante)
-    except Palestrante.DoesNotExist:
-        eventos_palestrante = Evento.objects.none()
-    
-    # Combina os querysets
-    eventos = (eventos_criados | eventos_palestrante).distinct().order_by('-data')
-    
-    # Calcula estatísticas
-    total_eventos = eventos.count()
-    eventos_proximos = eventos.filter(data__gte=date.today()).count()
-    
-    # Calcula total de participantes
-    total_participantes = 0
-    receita_total = 0
-    
-    for evento in eventos:
-        participantes_evento = evento.ingressos.count()
-        total_participantes += participantes_evento
-        
-        if evento.preco:
-            receita_total += evento.preco * participantes_evento
-    
-    # Adiciona informações de participantes para cada evento
-    for evento in eventos:
-        evento.vagas_ocupadas = evento.ingressos.count()
-    
-    context = {
-        'eventos': eventos,
-        'total_eventos': total_eventos,
-        'total_participantes': total_participantes,
-        'eventos_proximos': eventos_proximos,
-        'receita_total': receita_total,
-    }
-    
-    return render(request, 'eventos/painel_palestrante.html', context)
+# Função removida - funcionalidade de palestrante agora gerenciada pelo admin

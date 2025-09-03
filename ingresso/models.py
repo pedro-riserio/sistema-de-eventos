@@ -1,8 +1,10 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.core.validators import MinValueValidator
 from decimal import Decimal
 import uuid
+
+User = get_user_model()
 
 class Ingresso(models.Model):
     TIPO_CHOICES = [
@@ -15,8 +17,7 @@ class Ingresso(models.Model):
     valor = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(Decimal('0.00'))])
     evento = models.ForeignKey('eventos.Evento', on_delete=models.CASCADE, related_name='ingressos')
     participante = models.ForeignKey(User, on_delete=models.CASCADE, related_name='ingressos')
-    data_compra = models.DateTimeField(auto_now_add=True)
-    codigo = models.CharField(max_length=50, unique=True)
+    
     
     def save(self, *args, **kwargs):
         if not self.codigo:

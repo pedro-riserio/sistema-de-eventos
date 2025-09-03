@@ -6,16 +6,18 @@ from django.db.models import Q
 from .models import Ingresso
 from .models_crud import TipoIngresso
 from .forms import IngressoForm
+from eventos.models import Evento
+from eventos.decorators import cliente_required
 
 
 @login_required
 @permission_required('ingresso.view_ingresso', raise_exception=True)
 def lista_ingressos(request):
     """Lista todos os tipos de ingressos com filtros e paginação"""
-    # Filtrar tipos de ingressos apenas dos eventos do palestrante logado
-    ingressos = TipoIngresso.objects.filter(
-        evento__palestrantes=request.user
-    ).select_related('evento').order_by('-evento__data', 'tipo')
+    # Filtrar tipos de ingressos apenas dos eventos do usuário logado
+    tipos_ingressos = TipoIngresso.objects.filter(
+        evento__criador=request.user
+    ).select_related('evento').order_by('-data_criacao')
     
     # Filtro de busca
     busca = request.GET.get('busca')
@@ -36,7 +38,7 @@ def lista_ingressos(request):
     page_obj = paginator.get_page(page_number)
     
     # Eventos para filtro
-    eventos_usuario = request.user.eventos_palestrante.all().order_by('nome')
+    eventos_usuario = request.user.eventos_criados.all().order_by('nome')
     
     context = {
         'page_obj': page_obj,
@@ -69,7 +71,7 @@ def editar_ingresso(request, ingresso_id):
     ingresso = get_object_or_404(
         TipoIngresso, 
         id=ingresso_id, 
-        evento__palestrantes=request.user
+        evento__criador=request.user
     )
     
     if request.method == 'POST':
@@ -93,7 +95,7 @@ def excluir_ingresso(request, ingresso_id):
     ingresso = get_object_or_404(
         TipoIngresso, 
         id=ingresso_id, 
-        evento__palestrantes=request.user
+        evento__criador=request.user
     )
     
     if request.method == 'POST':
@@ -104,3 +106,62 @@ def excluir_ingresso(request, ingresso_id):
     return render(request, 'ingresso/confirmar_exclusao.html', {
         'ingresso': ingresso
     })
+
+
+@cliente_required
+def comprar_ingresso(request, evento_id):
+    """View para compra de ingressos - apenas clientes"""
+    evento = get_object_or_404(Evento, id=evento_id)
+    
+    # Verificar se ainda há vagas disponíveis
+    if evento.vagas_disponiveis <= 0:
+        messages.error(request, 'Este evento não possui mais vagas disponíveis.')
+        return redirect('detalhe_evento', evento_id=evento_id)
+    
+    # Verificar se o usuário já possui ingresso para este evento
+    if Ingresso.objects.filter(participante=request.user, evento=evento).exists():
+        messages.warning(request, 'Você já possui um ingresso para este evento.')
+        return redirect('usuario:meus_ingressos')
+    
+    if request.method == 'POST':
+        # Criar o ingresso
+        ingresso = Ingresso.objects.create(
+            participante=request.user,
+            evento=evento,
+            preco_pago=evento.preco
+        )
+        
+        # Reduzir vagas disponíveis
+        evento.vagas_disponiveis -= 1
+        evento.save()
+        
+        messages.success(request, f'Ingresso para "{evento.nome}" comprado com sucesso!')
+        return redirect('usuario:meus_ingressos')
+    
+    context = {
+        'evento': evento,
+    }
+    return render(request, 'eventos/comprar_ingresso.html', context)
+
+
+@cliente_required
+def cancelar_ingresso(request, ingresso_id):
+    """View para cancelamento de ingressos - apenas clientes"""
+    ingresso = get_object_or_404(Ingresso, id=ingresso_id, participante=request.user)
+    
+    if request.method == 'POST':
+        evento = ingresso.evento
+        # Aumentar vagas disponíveis
+        evento.vagas_disponiveis += 1
+        evento.save()
+        
+        # Deletar o ingresso
+        ingresso.delete()
+        
+        messages.success(request, f'Ingresso para "{evento.nome}" cancelado com sucesso!')
+        return redirect('usuario:meus_ingressos')
+    
+    context = {
+        'ingresso': ingresso,
+    }
+    return render(request, 'eventos/cancelar_ingresso.html', context)

@@ -28,27 +28,7 @@
                         </div>
                     </div>
 
-                    <!-- Palestrantes -->
-                    {% if evento.palestrantes.all %}
-                        <div class="card shadow-sm mb-4">
-                            <div class="card-body">
-                                <h3 class="card-title mb-4">Palestrantes</h3>
-                                <div class="row g-3">
-                                    {% for palestrante in evento.palestrantes.all %}
-                                        <div class="col-md-6">
-                                            <div class="d-flex align-items-center">
-                                                <img src="https://source.unsplash.com/random/80x80/?portrait" class="rounded-circle me-3" width="60" height="60" alt="{{ palestrante.nome }}">
-                                                <div>
-                                                    <h5 class="mb-1">{{ palestrante.nome }}</h5>
-                                                    <p class="text-muted mb-0 small">{{ palestrante.biografia|truncatewords:15 }}</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    {% endfor %}
-                                </div>
-                            </div>
-                        </div>
-                    {% endif %}
+                    <!-- Seção de palestrantes removida -->
 
                     <!-- Local -->
                     <div class="card shadow-sm mb-4">
@@ -103,17 +83,17 @@
                             </div>
 
                             {% if user.is_authenticated %}
-                                {% if user_profile and user_profile.tipo_usuario == 'cliente' %}
+                                {% if user.is_authenticated and is_cliente %}
                                     {% if ja_inscrito %}
                                         <div class="alert alert-success text-center">
                                             <i class="bi bi-check-circle me-2"></i>
                                             Você já possui ingresso!
                                         </div>
-                                        <a href="{% url 'meus_ingressos' %}" class="btn btn-outline-primary w-100">
+                                        <a href="{% url 'usuario:meus_ingressos' %}" class="btn btn-outline-primary w-100">
                                             <i class="bi bi-ticket me-2"></i>Ver Meu Ingresso
                                         </a>
                                     {% elif evento.vagas_disponiveis > 0 %}
-                                        <a href="{% url 'comprar_ingresso' evento.id %}" class="btn btn-success w-100 btn-lg">
+                                        <a href="{% url 'ingresso:comprar_ingresso' evento.id %}" class="btn btn-success w-100 btn-lg">
                                             <i class="bi bi-cart me-2"></i>Comprar Ingresso
                                         </a>
                                     {% else %}
@@ -121,20 +101,13 @@
                                             <i class="bi bi-x me-2"></i>Esgotado
                                         </button>
                                     {% endif %}
-                                {% elif user_profile and user_profile.tipo_usuario == 'palestrante' %}
-                                    <div class="alert alert-info text-center">
-                                        <i class="bi bi-mic me-2"></i>
-                                        Você é um palestrante
-                                    </div>
-                                    <a href="{% url 'meus_eventos' %}" class="btn btn-outline-primary w-100">
-                                        <i class="bi bi-calendar me-2"></i>Meus Eventos
-                                    </a>
+                                <!-- Informação de palestrante removida -->
                                 {% else %}
                                     <div class="alert alert-warning text-center">
                                         <i class="bi bi-person-gear me-2"></i>
                                         Complete seu perfil para continuar
                                     </div>
-                                    <a href="{% url 'criar_perfil' %}" class="btn btn-primary w-100">
+                                    <a href="{% url 'usuario:criar_perfil' %}" class="btn btn-primary w-100">
                                         <i class="bi bi-person-plus me-2"></i>Completar Perfil
                                     </a>
                                 {% endif %}
@@ -172,12 +145,7 @@
                                 <i class="bi bi-people text-muted me-2"></i>
                                 <strong>Capacidade:</strong> {{ evento.local.capacidade }} pessoas
                             </div>
-                            {% if evento.palestrantes.all %}
-                                <div class="mb-3">
-                                    <i class="bi bi-mic text-muted me-2"></i>
-                                    <strong>Palestrantes:</strong> {{ evento.palestrantes.count }}
-                                </div>
-                            {% endif %}
+                            <!-- Informação de palestrantes removida -->
                         </div>
                     </div>
                 </div>

@@ -1,4 +1,4 @@
-from usuario.models import UserProfile
+from usuario.models import Usuario
 
 class UserProfileMiddleware:
     """
@@ -12,8 +12,8 @@ class UserProfileMiddleware:
         # Adiciona o perfil do usuário ao request se estiver autenticado
         if request.user.is_authenticated:
             try:
-                request.user_profile = UserProfile.objects.get(user=request.user)
-            except UserProfile.DoesNotExist:
+                request.user_profile = Usuario.objects.get(id=request.user.id)
+            except Usuario.DoesNotExist:
                 request.user_profile = None
         else:
             request.user_profile = None

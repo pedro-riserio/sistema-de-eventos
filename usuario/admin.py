@@ -1,36 +1,24 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
-from django.contrib.auth.models import User, Group, Permission
+from django.contrib.auth.models import Group, Permission
+from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.models import ContentType
-from .models import UserProfile
+from .models import Usuario
+
+User = get_user_model()
 
 
-class UserProfileInline(admin.StackedInline):
-    model = UserProfile
-    can_delete = False
-    verbose_name_plural = 'Perfil'
-
-
-class UserAdmin(BaseUserAdmin):
-    inlines = (UserProfileInline,)
-
-
-@admin.register(UserProfile)
-class UserProfileAdmin(admin.ModelAdmin):
-    list_display = ['user', 'tipo_usuario', 'telefone', 'cpf']
-    list_filter = ['tipo_usuario']
-    search_fields = ['user__username', 'user__email', 'user__first_name', 'user__last_name']
-    
-
-# Reregistrar o User admin
-admin.site.unregister(User)
-admin.site.register(User, UserAdmin)
+@admin.register(Usuario)
+class UsuarioAdmin(admin.ModelAdmin):
+    list_display = ['username', 'nome', 'telefone', 'cpf', 'group']
+    list_filter = ['is_staff', 'is_superuser', 'is_active']
+    search_fields = ['username', 'nome', 'telefone', 'cpf']
 
 
 # Função para criar grupos e permissões
 def create_groups_and_permissions():
     # Criar grupos
-    palestrante_group, created = Group.objects.get_or_create(name='Palestrante')
+    # Grupo de palestrante removido
     participante_group, created = Group.objects.get_or_create(name='Participante')
     
     # Obter content types
@@ -51,15 +39,16 @@ def create_groups_and_permissions():
     )
     
     # Atribuir permissões aos grupos
-    palestrante_group.permissions.add(criar_evento_perm, gerenciar_evento_perm)
+    # Permissões de palestrante removidas
     
     # Participantes têm permissões básicas (visualizar eventos, comprar ingressos)
     # Essas permissões já existem por padrão
 
 
 # Executar a criação de grupos ao importar o módulo
-try:
-    create_groups_and_permissions()
-except Exception as e:
-    # Ignorar erros durante migrações
-    pass
+# Comentado para evitar acesso ao banco durante inicialização
+# try:
+#     create_groups_and_permissions()
+# except Exception as e:
+#     # Ignorar erros durante migrações
+#     pass

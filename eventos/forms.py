@@ -51,17 +51,13 @@ class ContatoForm(forms.Form):
 class EventoForm(forms.ModelForm):
     class Meta:
         model = Evento
-        fields = ['nome', 'data', 'descricao', 'local', 'categoria', 'tipo', 'preco', 'vagas_disponiveis', 'imagem']
+        fields = ['nome', 'data', 'descricao', 'local', 'categoria']
         widgets = {
             'nome': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nome do evento'}),
             'data': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'descricao': forms.Textarea(attrs={'class': 'form-control', 'rows': 4, 'placeholder': 'Descrição do evento...'}),
             'local': forms.Select(attrs={'class': 'form-select'}),
             'categoria': forms.Select(attrs={'class': 'form-select'}),
-            'tipo': forms.Select(attrs={'class': 'form-select'}),
-            'preco': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.01', 'min': '0'}),
-            'vagas_disponiveis': forms.NumberInput(attrs={'class': 'form-control', 'min': '1'}),
-            'imagem': forms.URLInput(attrs={'class': 'form-control', 'placeholder': 'URL da imagem (opcional)'}),
         }
         labels = {
             'nome': 'Nome do Evento',
@@ -69,10 +65,6 @@ class EventoForm(forms.ModelForm):
             'descricao': 'Descrição',
             'local': 'Local',
             'categoria': 'Categoria',
-            'tipo': 'Tipo de Evento',
-            'preco': 'Preço (R$)',
-            'vagas_disponiveis': 'Vagas Disponíveis',
-            'imagem': 'Imagem (URL)',
         }
     
     def __init__(self, *args, **kwargs):

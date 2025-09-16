@@ -9,11 +9,13 @@ urlpatterns = [
     path('perfil/', views.criar_perfil, name='criar_perfil'),
     path('meus-ingressos/', views.meus_ingressos, name='meus_ingressos'),
     
-    # Funcionalidades de palestrante removidas - agora gerenciadas pelo admin
+    # Dashboards específicos por grupo
+    path('dashboard-palestrante/', views.dashboard_palestrante, name='dashboard_palestrante'),
+    path('dashboard-participante/', views.dashboard_participante, name='dashboard_participante'),
     
     # Autenticação
     path('login/', auth_views.LoginView.as_view(template_name='registration/login.html'), name='login'),
-    path('logout/', auth_views.LogoutView.as_view(), name='logout'),
+    path('logout/', views.custom_logout, name='logout'),
     path('registro/', views.registro, name='registro'),
     
     # Reset de senha

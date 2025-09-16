@@ -15,6 +15,17 @@ from datetime import date
 def home(request):
     """View principal da página inicial"""
     eventos_destaque = Evento.objects.filter(data__gte=date.today()).order_by('data')[:3]
+
+    # recupera os grupos que o usuário faz parte
+    grupos = request.user.groups.all()
+
+    print("###############", grupos)
+
+    if grupos.filter(name='GrupoZ').exists():
+        return redirect('globo.com')
+    # elif grupos.filter(name='GrupoB').exists():
+    #     return redirect('record.com')
+
     context = {
         'eventos_destaque': eventos_destaque,
     }

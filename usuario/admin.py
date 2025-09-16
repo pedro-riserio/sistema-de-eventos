@@ -10,9 +10,16 @@ User = get_user_model()
 
 @admin.register(Usuario)
 class UsuarioAdmin(admin.ModelAdmin):
-    list_display = ['username', 'nome', 'telefone', 'cpf', 'group']
+    list_display = ['username', 'nome', 'telefone', 'cpf', 'group', 'is_active']
     list_filter = ['is_staff', 'is_superuser', 'is_active']
     search_fields = ['username', 'nome', 'telefone', 'cpf']
+    fieldsets = (
+        (None, {'fields': ('username', 'password')}),
+        ('Informações Pessoais', {'fields': ('nome', 'telefone', 'cpf')}),
+        ('Grupo e Permissões', {'fields': ('group', 'is_active', 'is_staff', 'is_superuser')}),
+        ('Datas Importantes', {'fields': ('last_login', 'date_joined')}),
+    )
+    readonly_fields = ('last_login', 'date_joined')
 
 
 # Função para criar grupos e permissões

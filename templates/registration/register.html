@@ -31,44 +31,23 @@
                     <form method="post" id="registerForm">
                         {% csrf_token %}
                         
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="{{ form.first_name.id_for_label }}" class="form-label">
-                                    <i class="fas fa-user me-2"></i>Nome *
-                                </label>
-                                <div class="input-group">
-                                    <span class="input-group-text">
-                                        <i class="fas fa-user"></i>
-                                    </span>
-                                    {{ form.first_name }}
-                                </div>
-                                {% if form.first_name.errors %}
-                                    <div class="text-danger mt-1">
-                                        {% for error in form.first_name.errors %}
-                                            <small>{{ error }}</small>
-                                        {% endfor %}
-                                    </div>
-                                {% endif %}
+                        <div class="mb-3">
+                            <label for="{{ form.nome.id_for_label }}" class="form-label">
+                                <i class="fas fa-user me-2"></i>Nome Completo *
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text">
+                                    <i class="fas fa-user"></i>
+                                </span>
+                                {{ form.nome }}
                             </div>
-                            
-                            <div class="col-md-6 mb-3">
-                                <label for="{{ form.last_name.id_for_label }}" class="form-label">
-                                    <i class="fas fa-user me-2"></i>Sobrenome *
-                                </label>
-                                <div class="input-group">
-                                    <span class="input-group-text">
-                                        <i class="fas fa-user"></i>
-                                    </span>
-                                    {{ form.last_name }}
+                            {% if form.nome.errors %}
+                                <div class="text-danger mt-1">
+                                    {% for error in form.nome.errors %}
+                                        <small>{{ error }}</small>
+                                    {% endfor %}
                                 </div>
-                                {% if form.last_name.errors %}
-                                    <div class="text-danger mt-1">
-                                        {% for error in form.last_name.errors %}
-                                            <small>{{ error }}</small>
-                                        {% endfor %}
-                                    </div>
-                                {% endif %}
-                            </div>
+                            {% endif %}
                         </div>
 
                         <div class="mb-3">
@@ -104,6 +83,25 @@
                             {% if form.email.errors %}
                                 <div class="text-danger mt-1">
                                     {% for error in form.email.errors %}
+                                        <small>{{ error }}</small>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.tipo_usuario.id_for_label }}" class="form-label">
+                                <i class="fas fa-users me-2"></i>Tipo de Usuário *
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text">
+                                    <i class="fas fa-users"></i>
+                                </span>
+                                {{ form.tipo_usuario }}
+                            </div>
+                            {% if form.tipo_usuario.errors %}
+                                <div class="text-danger mt-1">
+                                    {% for error in form.tipo_usuario.errors %}
                                         <small>{{ error }}</small>
                                     {% endfor %}
                                 </div>
@@ -284,7 +282,7 @@
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         // Adicionar classes Bootstrap aos campos
-        const fields = ['first_name', 'last_name', 'username', 'email', 'password1', 'password2'];
+        const fields = ['nome', 'username', 'email', 'tipo_usuario', 'password1', 'password2'];
         fields.forEach(fieldName => {
             const field = document.getElementById(`id_${fieldName}`);
             if (field) {
@@ -295,8 +293,7 @@
 
         // Definir placeholders
         const placeholders = {
-            'id_first_name': 'Digite seu nome',
-            'id_last_name': 'Digite seu sobrenome',
+            'id_nome': 'Digite seu nome completo',
             'id_username': 'Digite um nome de usuário',
             'id_email': 'Digite seu email',
             'id_password1': 'Digite uma senha segura',

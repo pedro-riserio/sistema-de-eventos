@@ -1,0 +1,141 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard Participante{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <h2 class="mb-4">
+                <i class="bi bi-person-check"></i> Dashboard do Participante
+            </h2>
+        </div>
+    </div>
+
+    <!-- Estatísticas -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h4>{{ total_ingressos }}</h4>
+                            <p class="mb-0">Ingressos Adquiridos</p>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="bi bi-ticket-perforated fs-1"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lista de Ingressos -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Meus Ingressos</h5>
+                    <a href="{% url 'lista_eventos' %}" class="btn btn-primary btn-sm">
+                        <i class="bi bi-search"></i> Buscar Eventos
+                    </a>
+                </div>
+                <div class="card-body">
+                    {% if ingressos %}
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Evento</th>
+                                        <th>Tipo</th>
+                                        <th>Valor</th>
+                                        <th>Data da Compra</th>
+                                        <th>Status</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for ingresso in ingressos %}
+                                    <tr>
+                                        <td>
+                                            <strong>{{ ingresso.evento.nome }}</strong><br>
+                                            <small class="text-muted">{{ ingresso.evento.data|date:"d/m/Y H:i" }}</small>
+                                        </td>
+                                        <td>{{ ingresso.tipo }}</td>
+                                        <td>R$ {{ ingresso.valor|floatformat:2 }}</td>
+                                        <td>{{ ingresso.data_compra|date:"d/m/Y H:i" }}</td>
+                                        <td>
+                                            {% if ingresso.evento.data > now %}
+                                                <span class="badge bg-success">Válido</span>
+                                            {% else %}
+                                                <span class="badge bg-secondary">Evento Finalizado</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <a href="{% url 'detalhe_evento' ingresso.evento.id %}" class="btn btn-sm btn-outline-primary">
+                                                <i class="bi bi-eye"></i> Ver Evento
+                                            </a>
+                                            {% if ingresso.evento.data > now %}
+                                                <a href="{% url 'cancelar_ingresso' ingresso.id %}" class="btn btn-sm btn-outline-danger">
+                                                    <i class="bi bi-x-circle"></i> Cancelar
+                                                </a>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-4">
+                            <i class="bi bi-ticket-perforated fs-1 text-muted"></i>
+                            <p class="text-muted mt-2">Você ainda não possui nenhum ingresso.</p>
+                            <a href="{% url 'lista_eventos' %}" class="btn btn-primary">
+                                <i class="bi bi-search"></i> Explorar Eventos
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Eventos Inscritos -->
+    {% if eventos_inscritos %}
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Próximos Eventos</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        {% for evento in eventos_inscritos %}
+                            {% if evento.data > now %}
+                            <div class="col-md-6 col-lg-4 mb-3">
+                                <div class="card h-100">
+                                    <div class="card-body">
+                                        <h6 class="card-title">{{ evento.nome }}</h6>
+                                        <p class="card-text">
+                                            <small class="text-muted">
+                                                <i class="bi bi-calendar"></i> {{ evento.data|date:"d/m/Y H:i" }}<br>
+                                                <i class="bi bi-geo-alt"></i> {{ evento.local.nome }}
+                                            </small>
+                                        </p>
+                                        <a href="{% url 'detalhe_evento' evento.id %}" class="btn btn-sm btn-primary">
+                                            Ver Detalhes
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -31,13 +31,13 @@ urlpatterns = [
     path('contato/', eventos_views.contato, name='contato'),
     path('inscrever/<int:evento_id>/', eventos_views.inscrever_evento, name='inscrever_evento'),
     
-    # Apps URLs
-    path('eventos/', include('eventos.urls')),
-    path('', include('usuario.urls')),
-    path('', include('categoria.urls')),
-    path('', include('atividade.urls')),
-    path('', include('local.urls')),
-    path('', include('ingresso.urls')),
+    # Apps URLs com prefixos únicos
+    path('gerenciar/eventos/', include('eventos.urls')),
+    path('usuario/', include('usuario.urls')),
+    path('categoria/', include('categoria.urls')),
+    path('atividade/', include('atividade.urls')),
+    path('local/', include('local.urls')),
+    path('ingresso/', include('ingresso.urls')),
 ]
 
 # Serve media files during development

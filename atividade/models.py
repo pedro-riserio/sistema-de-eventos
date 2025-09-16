@@ -8,7 +8,7 @@ User = get_user_model()
 class Atividade(models.Model):
     evento = models.ForeignKey(Evento, on_delete=models.CASCADE, related_name='atividades')
     nome = models.CharField(max_length=200)
-    responsavel = models.ForeignKey(User, on_delete=models.CASCADE, related_name='atividades_responsavel')
+    responsavel = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='atividades_responsavel')
     tipo = models.CharField(max_length=100)
     
     def clean(self):

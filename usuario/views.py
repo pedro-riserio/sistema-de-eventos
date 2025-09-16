@@ -1,13 +1,13 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth import get_user_model
+from django.contrib.auth import get_user_model, login, logout
+from django.contrib.auth.models import Group
 from .forms import CustomUserCreationForm, UserProfileForm
 from .models import Usuario
+from .decorators import palestrante_required, participante_required
 from ingresso.models import Ingresso
-
-User = get_user_model()
-
+from eventos.models import Evento
 
 def registro(request):
     """Registro de novos usuários"""
@@ -15,8 +15,19 @@ def registro(request):
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
-            messages.success(request, 'Conta criada com sucesso! Faça login para continuar.')
-            return redirect('usuario:login')
+            # Fazer login automático após registro
+            login(request, user)
+            
+            # Redirecionar baseado no grupo do usuário
+            if user.groups.filter(name='palestrante').exists():
+                messages.success(request, 'Conta de palestrante criada com sucesso! Bem-vindo ao seu dashboard.')
+                return redirect('usuario:dashboard_palestrante')
+            elif user.groups.filter(name='participante').exists():
+                messages.success(request, 'Conta de participante criada com sucesso! Bem-vindo ao seu dashboard.')
+                return redirect('usuario:dashboard_participante')
+            else:
+                messages.success(request, 'Conta criada com sucesso!')
+                return redirect('home')
     else:
         form = CustomUserCreationForm()
     
@@ -50,3 +61,40 @@ def meus_ingressos(request):
     
     context = {'ingressos': ingressos}
     return render(request, 'eventos/meus_ingressos.html', context)
+
+
+@palestrante_required
+def dashboard_palestrante(request):
+    """Dashboard específico para palestrantes"""
+    # Buscar eventos do palestrante
+    eventos = Evento.objects.filter(criador=request.user).order_by('-data')
+    
+    context = {
+        'eventos': eventos,
+        'total_eventos': eventos.count(),
+    }
+    return render(request, 'usuario/dashboard_palestrante.html', context)
+
+
+@participante_required
+def dashboard_participante(request):
+    """Dashboard específico para participantes"""
+    # Buscar ingressos do participante
+    ingressos = Ingresso.objects.filter(participante=request.user).order_by('-data_compra')
+    eventos_inscritos = [ingresso.evento for ingresso in ingressos]
+    
+    context = {
+        'ingressos': ingressos,
+        'eventos_inscritos': eventos_inscritos,
+        'total_ingressos': ingressos.count(),
+    }
+    return render(request, 'usuario/dashboard_participante.html', context)
+
+
+def custom_logout(request):
+    """View customizada de logout para evitar problemas com middleware"""
+    # Definir flag na sessão antes do logout
+    request.session['logout_redirect'] = True
+    logout(request)
+    messages.success(request, 'Você foi desconectado com sucesso!')
+    return redirect('home')

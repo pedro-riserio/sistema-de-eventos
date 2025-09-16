@@ -19,6 +19,7 @@ class Evento(models.Model):
     descricao = models.TextField()
     local = models.ForeignKey('local.Local', on_delete=models.CASCADE, related_name='eventos')
     categoria = models.ForeignKey('categoria.Categoria', on_delete=models.CASCADE, related_name='eventos', null=True, blank=True)
+    # criador = models.ForeignKey(User, on_delete=models.CASCADE, related_name='eventos_criados', null=True, blank=True)
     
     def __str__(self):
         return f"{self.nome} - {self.data}"

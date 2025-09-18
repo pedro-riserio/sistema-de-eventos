@@ -6,7 +6,7 @@ Um sistema web desenvolvido em Django para gerenciamento completo de eventos, pe
 ## LINK DO VIDEO:
 
 ### No Youtube 
-- 
+- https://youtu.be/3Q6x79Yg8mY
 
 
 

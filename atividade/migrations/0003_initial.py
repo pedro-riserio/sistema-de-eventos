@@ -10,14 +10,14 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('ingresso', '0001_initial'),
+        ('atividade', '0002_initial'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='ingresso',
-            name='participante',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='ingressos', to=settings.AUTH_USER_MODEL),
+            model_name='atividade',
+            name='responsavel',
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='atividades_responsavel', to=settings.AUTH_USER_MODEL),
         ),
     ]

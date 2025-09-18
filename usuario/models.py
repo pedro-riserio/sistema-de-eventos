@@ -1,16 +1,12 @@
 from django.db import models
-from django.contrib.auth.models import User, Group
+from django.contrib.auth.models import User
 
 
 class Usuario(User):
     nome = models.CharField(max_length=200)
-    telefone = models.CharField(max_length=15, blank=True)
-    cpf = models.CharField(max_length=14, blank=True, unique=True)
-    # group = models.ForeignKey(Group, on_delete=models.SET_NULL, null=True, blank=True, related_name='usuarios')
-    # Group já relaciona com User. Experimente request.user.groups e verá todos os grupos do usuário
-    
-    # Desabilitar o campo email do User padrão
-    email = None
+    telefone = models.CharField(max_length=15)
+    cpf = models.CharField(max_length=14, unique=True)
+    area = models.CharField(max_length=200, blank=True, null=True, help_text='Área de atuação do palestrante')
     
     def __str__(self):
         return f'{self.nome}'

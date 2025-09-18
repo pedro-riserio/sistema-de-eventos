@@ -29,7 +29,7 @@
                             <div class="row mb-3">
                                 <div class="col-sm-6">
                                     <strong><i class="fas fa-calendar"></i> Data:</strong><br>
-                                    {{ evento.data_evento|date:"d/m/Y" }}
+                                    {{ evento.data|date:"d/m/Y" }}
                                 </div>
                                 <div class="col-sm-6">
                                     <strong><i class="fas fa-map-marker-alt"></i> Local:</strong><br>
@@ -40,11 +40,11 @@
                             <div class="row mb-3">
                                 <div class="col-sm-6">
                                     <strong><i class="fas fa-tag"></i> Categoria:</strong><br>
-                                    {{ evento.categoria.nome }}
+                                    {% if evento.categoria %}{{ evento.categoria.nome }}{% else %}Sem categoria{% endif %}
                                 </div>
                                 <div class="col-sm-6">
-                                    <strong><i class="fas fa-users"></i> Vagas Disponíveis:</strong><br>
-                                    {{ evento.vagas_disponiveis }}
+                                    <strong><i class="fas fa-users"></i> Vagas Restantes:</strong><br>
+                                    {{ evento.vagas_restantes }}
                                 </div>
                             </div>
                             

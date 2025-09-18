@@ -4,7 +4,6 @@ from django.contrib import messages
 from django.core.paginator import Paginator
 from django.db.models import Q
 from .models import Ingresso
-from .models_crud import TipoIngresso
 from .forms import IngressoForm
 from eventos.models import Evento
 from eventos.decorators import cliente_required
@@ -13,18 +12,19 @@ from eventos.decorators import cliente_required
 @login_required
 @permission_required('ingresso.view_ingresso', raise_exception=True)
 def lista_ingressos(request):
-    """Lista todos os tipos de ingressos com filtros e paginação"""
-    # Filtrar tipos de ingressos apenas dos eventos do usuário logado
-    tipos_ingressos = TipoIngresso.objects.filter(
+    """Lista todos os ingressos com filtros e paginação"""
+    # Filtrar ingressos apenas dos eventos do usuário logado
+    ingressos = Ingresso.objects.filter(
         evento__criador=request.user
-    ).select_related('evento').order_by('-data_criacao')
+    ).select_related('evento', 'participante').order_by('-id')
     
     # Filtro de busca
     busca = request.GET.get('busca')
     if busca:
         ingressos = ingressos.filter(
             Q(evento__nome__icontains=busca) |
-            Q(tipo__icontains=busca)
+            Q(tipo__icontains=busca) |
+            Q(participante__username__icontains=busca)
         )
     
     # Filtro por evento
@@ -69,7 +69,7 @@ def criar_ingresso(request):
 @permission_required('ingresso.change_ingresso', raise_exception=True)
 def editar_ingresso(request, ingresso_id):
     ingresso = get_object_or_404(
-        TipoIngresso, 
+        Ingresso, 
         id=ingresso_id, 
         evento__criador=request.user
     )
@@ -93,7 +93,7 @@ def editar_ingresso(request, ingresso_id):
 @permission_required('ingresso.delete_ingresso', raise_exception=True)
 def excluir_ingresso(request, ingresso_id):
     ingresso = get_object_or_404(
-        TipoIngresso, 
+        Ingresso, 
         id=ingresso_id, 
         evento__criador=request.user
     )

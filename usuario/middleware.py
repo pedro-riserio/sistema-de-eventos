@@ -48,9 +48,9 @@ class GroupRedirectMiddleware:
             request.method == 'GET'):
             
             # Verificar grupos do usuário e redirecionar
-            if request.user.groups.filter(name='palestrante').exists():
+            if request.user.groups.filter(name='Palestrante').exists():
                 return redirect('usuario:dashboard_palestrante')
-            elif request.user.groups.filter(name='participante').exists():
+            elif request.user.groups.filter(name='Participante').exists():
                 return redirect('usuario:dashboard_participante')
         
         return None
@@ -67,13 +67,13 @@ class GroupAccessMiddleware:
         
         # Definir URLs protegidas por grupo
         self.protected_urls = {
-            'palestrante': [
+            'Palestrante': [
                 '/usuario/dashboard-palestrante/',
                 '/eventos/criar/',
                 '/eventos/editar/',
                 '/eventos/meus-eventos/',
             ],
-            'participante': [
+            'Participante': [
                 '/usuario/dashboard-participante/',
                 '/eventos/meus-ingressos/',
                 '/ingresso/comprar/',

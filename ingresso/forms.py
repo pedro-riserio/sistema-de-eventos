@@ -1,12 +1,14 @@
 from django import forms
 from .models import Ingresso
-from .models_crud import TipoIngresso
 from eventos.models import Evento
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 class IngressoForm(forms.ModelForm):
     class Meta:
-        model = TipoIngresso
-        fields = ['evento', 'tipo', 'preco', 'quantidade_disponivel']
+        model = Ingresso
+        fields = ['evento', 'tipo', 'valor', 'participante']
         widgets = {
             'evento': forms.Select(attrs={
                 'class': 'form-select'
@@ -14,23 +16,21 @@ class IngressoForm(forms.ModelForm):
             'tipo': forms.Select(attrs={
                 'class': 'form-select'
             }),
-            'preco': forms.NumberInput(attrs={
+            'valor': forms.NumberInput(attrs={
                 'class': 'form-control',
                 'step': '0.01',
                 'min': '0',
-                'placeholder': 'Digite o preço do ingresso'
+                'placeholder': 'Digite o valor do ingresso'
             }),
-            'quantidade_disponivel': forms.NumberInput(attrs={
-                'class': 'form-control',
-                'min': '1',
-                'placeholder': 'Quantidade disponível'
+            'participante': forms.Select(attrs={
+                'class': 'form-select'
             })
         }
         labels = {
             'evento': 'Evento',
             'tipo': 'Tipo de Ingresso',
-            'preco': 'Preço (R$)',
-            'quantidade_disponivel': 'Quantidade Disponível'
+            'valor': 'Valor (R$)',
+            'participante': 'Participante'
         }
     
     def __init__(self, *args, **kwargs):
@@ -45,14 +45,8 @@ class IngressoForm(forms.ModelForm):
         else:
             self.fields['evento'].queryset = Evento.objects.all()
     
-    def clean_preco(self):
-        preco = self.cleaned_data.get('preco')
-        if preco and preco < 0:
-            raise forms.ValidationError('O preço deve ser maior ou igual a zero.')
-        return preco
-    
-    def clean_quantidade_disponivel(self):
-        quantidade = self.cleaned_data.get('quantidade_disponivel')
-        if quantidade and quantidade < 1:
-            raise forms.ValidationError('A quantidade deve ser maior que zero.')
-        return quantidade
+    def clean_valor(self):
+        valor = self.cleaned_data.get('valor')
+        if valor and valor < 0:
+            raise forms.ValidationError('O valor deve ser maior ou igual a zero.')
+        return valor

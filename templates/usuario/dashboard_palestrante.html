@@ -1,14 +1,20 @@
 {% extends 'base.html' %}
 
-{% block title %}Dashboard Palestrante{% endblock %}
+{% block title %}Área do Palestrante{% endblock %}
 
 {% block content %}
 <div class="container mt-4">
     <div class="row">
         <div class="col-12">
             <h2 class="mb-4">
-                <i class="bi bi-person-badge"></i> Dashboard do Palestrante
+                <i class="bi bi-person-badge"></i> Área do Palestrante
             </h2>
+            {% if user_profile.area %}
+            <div class="alert alert-info mb-4">
+                <i class="bi bi-briefcase me-2"></i>
+                <strong>Área de Atuação:</strong> {{ user_profile.area }}
+            </div>
+            {% endif %}
         </div>
     </div>
 
@@ -24,6 +30,37 @@
                         </div>
                         <div class="align-self-center">
                             <i class="bi bi-calendar-event fs-1"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h4>{{ total_ingressos }}</h4>
+                            <p class="mb-0">Ingressos Vendidos</p>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="bi bi-ticket-perforated fs-1"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-info text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <a href="/ingresso/ingressos/" class="btn btn-light btn-sm">
+                                <i class="bi bi-gear"></i> Gerenciar Ingressos
+                            </a>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="bi bi-tools fs-1"></i>
                         </div>
                     </div>
                 </div>
@@ -60,7 +97,7 @@
                                         <td>
                                             <strong>{{ evento.nome }}</strong>
                                         </td>
-                                        <td>{{ evento.data|date:"d/m/Y H:i" }}</td>
+                                        <td>{{ evento.data|date:"d/m/Y" }} às {{ evento.hora|time:"H:i" }}</td>
                                         <td>{{ evento.local.nome }}</td>
                                         <td>
                                             {% if evento.data > now %}

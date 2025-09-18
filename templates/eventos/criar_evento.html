@@ -69,13 +69,35 @@
                                 </div>
                             </div>
 
-                            <div class="mb-3">
-                                <label for="{{ form.local.id_for_label }}" class="form-label">Local *</label>
-                                <div class="input-group">
-                                    <span class="input-group-text"><i class="bi bi-geo-alt"></i></span>
-                                    {{ form.local }}
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="{{ form.local.id_for_label }}" class="form-label">Local *</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="bi bi-geo-alt"></i></span>
+                                        {{ form.local }}
+                                    </div>
+                                    <div class="form-text">Selecione o local onde o evento será realizado.</div>
                                 </div>
-                                <div class="form-text">Selecione o local onde o evento será realizado.</div>
+                                
+                                <div class="col-md-6 mb-3">
+                                    <label for="{{ form.categoria.id_for_label }}" class="form-label">Categoria *</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="bi bi-bookmark"></i></span>
+                                        {{ form.categoria }}
+                                    </div>
+                                    <div class="form-text">Selecione a categoria do evento.</div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-12 mb-3">
+                                    <label for="{{ form.criador.id_for_label }}" class="form-label">Criador do Evento *</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="bi bi-person"></i></span>
+                                        {{ form.criador }}
+                                    </div>
+                                    <div class="form-text">Selecione o responsável pelo evento.</div>
+                                </div>
                             </div>
 
                             <div class="row">

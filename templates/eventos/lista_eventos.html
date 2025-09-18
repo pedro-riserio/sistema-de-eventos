@@ -78,6 +78,12 @@
                                         <i class="bi bi-geo-alt text-muted me-1"></i>
                                         <small class="text-muted">{{ evento.local.nome }}</small>
                                     </div>
+                                    {% if evento.criador %}
+                                    <div class="mb-2">
+                                        <i class="bi bi-person text-muted me-1"></i>
+                                        <small class="text-muted">Palestrante: {{ evento.criador.nome|default:evento.criador.username }}</small>
+                                    </div>
+                                    {% endif %}
                                     <div class="mb-2">
                                         <i class="bi bi-clock text-muted me-1"></i>
                                         <small class="text-muted">{{ evento.horario }}</small>
@@ -159,24 +165,34 @@
 {% block extra_js %}
 <script>
     // Alternar entre visualização em grade e lista
-    document.getElementById('list-view').addEventListener('change', function() {
-        if (this.checked) {
-            document.getElementById('eventos-grid').className = 'row g-2';
-            document.querySelectorAll('.evento-card').forEach(function(card) {
-                card.parentElement.className = 'col-12';
-                card.className = 'card shadow-sm evento-card';
-                card.style.flexDirection = 'row';
+    document.addEventListener('DOMContentLoaded', function() {
+        const listView = document.getElementById('list-view');
+        const gridView = document.getElementById('grid-view');
+        const eventosGrid = document.getElementById('eventos-grid');
+        
+        if (listView && eventosGrid) {
+            listView.addEventListener('change', function() {
+                if (this.checked) {
+                    eventosGrid.className = 'row g-2';
+                    document.querySelectorAll('.evento-card').forEach(function(card) {
+                        card.parentElement.className = 'col-12';
+                        card.className = 'card shadow-sm evento-card';
+                        card.style.flexDirection = 'row';
+                    });
+                }
             });
         }
-    });
 
-    document.getElementById('grid-view').addEventListener('change', function() {
-        if (this.checked) {
-            document.getElementById('eventos-grid').className = 'row g-4';
-            document.querySelectorAll('.evento-card').forEach(function(card) {
-                card.parentElement.className = 'col-md-6 col-lg-4';
-                card.className = 'card h-100 shadow-sm evento-card';
-                card.style.flexDirection = '';
+        if (gridView && eventosGrid) {
+            gridView.addEventListener('change', function() {
+                if (this.checked) {
+                    eventosGrid.className = 'row g-4';
+                    document.querySelectorAll('.evento-card').forEach(function(card) {
+                        card.parentElement.className = 'col-md-6 col-lg-4';
+                        card.className = 'card h-100 shadow-sm evento-card';
+                        card.style.flexDirection = '';
+                    });
+                }
             });
         }
     });

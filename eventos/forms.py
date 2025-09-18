@@ -13,13 +13,6 @@ class InscricaoEventoForm(forms.Form):
 
 
 class BuscaEventoForm(forms.Form):
-    TIPO_CHOICES = [('todos', 'Todos')] + Evento.TIPO_CHOICES
-    
-    tipo = forms.ChoiceField(
-        choices=TIPO_CHOICES,
-        required=False,
-        widget=forms.Select(attrs={'class': 'form-select'})
-    )
     data = forms.DateField(
         required=False,
         widget=forms.DateInput(attrs={'class': 'form-control', 'type': 'date'})
@@ -51,20 +44,34 @@ class ContatoForm(forms.Form):
 class EventoForm(forms.ModelForm):
     class Meta:
         model = Evento
-        fields = ['nome', 'data', 'descricao', 'local', 'categoria']
+        fields = ['nome', 'tipo', 'descricao', 'data', 'horario', 'local', 'categoria', 'criador', 'capacidade', 'preco', 'status', 'imagem']
         widgets = {
             'nome': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nome do evento'}),
-            'data': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'tipo': forms.Select(attrs={'class': 'form-select'}),
             'descricao': forms.Textarea(attrs={'class': 'form-control', 'rows': 4, 'placeholder': 'Descrição do evento...'}),
+            'data': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'horario': forms.TimeInput(attrs={'class': 'form-control', 'type': 'time'}),
             'local': forms.Select(attrs={'class': 'form-select'}),
             'categoria': forms.Select(attrs={'class': 'form-select'}),
+            'criador': forms.Select(attrs={'class': 'form-select'}),
+            'capacidade': forms.NumberInput(attrs={'class': 'form-control', 'min': '1'}),
+            'preco': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.01', 'min': '0'}),
+            'status': forms.Select(attrs={'class': 'form-select'}),
+            'imagem': forms.FileInput(attrs={'class': 'form-control'}),
         }
         labels = {
             'nome': 'Nome do Evento',
-            'data': 'Data do Evento',
+            'tipo': 'Tipo',
             'descricao': 'Descrição',
+            'data': 'Data do Evento',
+            'horario': 'Horário',
             'local': 'Local',
             'categoria': 'Categoria',
+            'criador': 'Criador do Evento',
+            'capacidade': 'Capacidade',
+            'preco': 'Preço',
+            'status': 'Status',
+            'imagem': 'Imagem do Evento',
         }
     
     def __init__(self, *args, **kwargs):

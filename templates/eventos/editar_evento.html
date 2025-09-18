@@ -180,7 +180,7 @@
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                         <i class="bi bi-x me-2"></i>Cancelar
                     </button>
-                    <form method="post" action="{% url 'deletar_evento' evento.id %}" style="display: inline;">
+                    <form method="post" action="{% url 'eventos:deletar_evento' evento.id %}" style="display: inline;">
                         {% csrf_token %}
                         <button type="submit" class="btn btn-danger">
                             <i class="bi bi-trash me-2"></i>Excluir Definitivamente

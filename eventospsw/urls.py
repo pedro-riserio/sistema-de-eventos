@@ -30,6 +30,7 @@ urlpatterns = [
     path('sobre/', eventos_views.sobre, name='sobre'),
     path('contato/', eventos_views.contato, name='contato'),
     path('inscrever/<int:evento_id>/', eventos_views.inscrever_evento, name='inscrever_evento'),
+
     
     # Apps URLs com prefixos únicos
     path('gerenciar/eventos/', include('eventos.urls')),

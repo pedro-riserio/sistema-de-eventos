@@ -63,13 +63,22 @@
                                 <div class="form-text">Formato: (11) 99999-9999</div>
                             </div>
 
-                            <div class="mb-4">
+                            <div class="mb-3">
                                 <label for="{{ form.cpf.id_for_label }}" class="form-label">CPF *</label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="fas fa-id-card"></i></span>
                                     {{ form.cpf }}
                                 </div>
                                 <div class="form-text">Necessário para identificação na entrada dos eventos.</div>
+                            </div>
+
+                            <div class="mb-4">
+                                <label for="{{ form.area.id_for_label }}" class="form-label">Área de Atuação</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-briefcase"></i></span>
+                                    {{ form.area }}
+                                </div>
+                                <div class="form-text">Opcional: Informe sua área de atuação profissional.</div>
                             </div>
 
                             <div class="mb-3 form-check">

@@ -10,27 +10,30 @@ User = get_user_model()
 
 @admin.register(Usuario)
 class UsuarioAdmin(admin.ModelAdmin):
-    list_display = ['username', 'nome', 'telefone', 'cpf', 'group', 'is_active']
-    list_filter = ['is_staff', 'is_superuser', 'is_active']
-    search_fields = ['username', 'nome', 'telefone', 'cpf']
-    fieldsets = (
-        (None, {'fields': ('username', 'password')}),
-        ('Informações Pessoais', {'fields': ('nome', 'telefone', 'cpf')}),
-        ('Grupo e Permissões', {'fields': ('group', 'is_active', 'is_staff', 'is_superuser')}),
-        ('Datas Importantes', {'fields': ('last_login', 'date_joined')}),
-    )
-    readonly_fields = ('last_login', 'date_joined')
+    list_display = ['get_username', 'nome', 'telefone', 'cpf', 'area', 'get_email']
+    search_fields = ['user__username', 'nome', 'telefone', 'cpf', 'area', 'user__email']
+    fields = ['user', 'nome', 'telefone', 'cpf', 'area']
+    
+    def get_username(self, obj):
+        return obj.user.username
+    get_username.short_description = 'Username'
+    
+    def get_email(self, obj):
+        return obj.user.email
+    get_email.short_description = 'Email'
 
 
 # Função para criar grupos e permissões
 def create_groups_and_permissions():
     # Criar grupos
-    # Grupo de palestrante removido
+    palestrante_group, created = Group.objects.get_or_create(name='Palestrante')
     participante_group, created = Group.objects.get_or_create(name='Participante')
     
     # Obter content types
     from eventos.models import Evento
+    from ingresso.models import Ingresso
     evento_ct = ContentType.objects.get_for_model(Evento)
+    ingresso_ct = ContentType.objects.get_for_model(Ingresso)
     
     # Criar permissões customizadas se não existirem
     criar_evento_perm, created = Permission.objects.get_or_create(
@@ -46,16 +49,29 @@ def create_groups_and_permissions():
     )
     
     # Atribuir permissões aos grupos
-    # Permissões de palestrante removidas
+    # Permissões para palestrantes
+    palestrante_permissions = [
+        'add_evento', 'change_evento', 'delete_evento', 'view_evento',
+        'add_ingresso', 'change_ingresso', 'delete_ingresso', 'view_ingresso'
+    ]
+    
+    for perm_code in palestrante_permissions:
+        if 'evento' in perm_code:
+            perm = Permission.objects.get(codename=perm_code, content_type=evento_ct)
+        else:
+            perm = Permission.objects.get(codename=perm_code, content_type=ingresso_ct)
+        palestrante_group.permissions.add(perm)
+    
+    # Adicionar permissões customizadas aos palestrantes
+    palestrante_group.permissions.add(criar_evento_perm, gerenciar_evento_perm)
     
     # Participantes têm permissões básicas (visualizar eventos, comprar ingressos)
     # Essas permissões já existem por padrão
 
 
 # Executar a criação de grupos ao importar o módulo
-# Comentado para evitar acesso ao banco durante inicialização
-# try:
-#     create_groups_and_permissions()
-# except Exception as e:
-#     # Ignorar erros durante migrações
-#     pass
+try:
+    create_groups_and_permissions()
+except Exception as e:
+    # Ignorar erros durante migrações
+    pass

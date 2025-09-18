@@ -7,8 +7,14 @@
     <div class="row">
         <div class="col-12">
             <h2 class="mb-4">
-                <i class="bi bi-person-check"></i> Dashboard do Participante
+                <i class="bi bi-person-check"></i> Área do Participante
             </h2>
+            {% if user_profile.area %}
+            <div class="alert alert-info mb-4">
+                <i class="bi bi-briefcase me-2"></i>
+                <strong>Área de Atuação:</strong> {{ user_profile.area }}
+            </div>
+            {% endif %}
         </div>
     </div>
 
@@ -64,7 +70,7 @@
                                         </td>
                                         <td>{{ ingresso.tipo }}</td>
                                         <td>R$ {{ ingresso.valor|floatformat:2 }}</td>
-                                        <td>{{ ingresso.data_compra|date:"d/m/Y H:i" }}</td>
+                                        <td>{{ ingresso.data_criacao|date:"d/m/Y H:i" }}</td>
                                         <td>
                                             {% if ingresso.evento.data > now %}
                                                 <span class="badge bg-success">Válido</span>

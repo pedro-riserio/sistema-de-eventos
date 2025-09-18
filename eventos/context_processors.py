@@ -7,7 +7,7 @@ def user_profile(request):
     """
     context = {
         'user_profile': None,
-        # Funcionalidade de palestrante removida
+        'is_organizador': False,
         'is_cliente': False,
     }
     
@@ -16,13 +16,14 @@ def user_profile(request):
             profile = Usuario.objects.get(id=request.user.id)
             context.update({
                 'user_profile': profile,
-                # Funcionalidade de palestrante removida
+                'is_organizador': request.user.groups.filter(name='organizador').exists(),
                 'is_cliente': request.user.groups.filter(name='participante').exists(),
             })
         except Usuario.DoesNotExist:
             profile = request.user
             context.update({
                 'user_profile': profile,
+                'is_organizador': request.user.groups.filter(name='organizador').exists(),
                 'is_cliente': request.user.groups.filter(name='participante').exists(),
             })
     

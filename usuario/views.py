@@ -19,10 +19,10 @@ def registro(request):
             login(request, user)
             
             # Redirecionar baseado no grupo do usuário
-            if user.groups.filter(name='palestrante').exists():
+            if user.groups.filter(name='Palestrante').exists():
                 messages.success(request, 'Conta de palestrante criada com sucesso! Bem-vindo ao seu dashboard.')
                 return redirect('usuario:dashboard_palestrante')
-            elif user.groups.filter(name='participante').exists():
+            elif user.groups.filter(name='Participante').exists():
                 messages.success(request, 'Conta de participante criada com sucesso! Bem-vindo ao seu dashboard.')
                 return redirect('usuario:dashboard_participante')
             else:
@@ -32,20 +32,22 @@ def registro(request):
         form = CustomUserCreationForm()
     
     context = {'form': form}
-    return render(request, 'registration/register.html', context)
+    return render(request, 'registration/registro.html', context)
 
 
 @login_required
 def criar_perfil(request):
     """Cria ou edita o perfil do usuário"""
     try:
-        # Como Usuario é o modelo de usuário customizado, usamos request.user diretamente
-        form = UserProfileForm(request.POST or None, instance=request.user)
+        # Buscar ou criar o perfil Usuario
+        usuario, created = Usuario.objects.get_or_create(user=request.user)
+        form = UserProfileForm(request.POST or None, instance=usuario)
     except:
         form = UserProfileForm(request.POST or None)
     
     if request.method == 'POST' and form.is_valid():
         profile = form.save(commit=False)
+        profile.user = request.user
         profile.save()
         messages.success(request, 'Perfil salvo com sucesso!')
         return redirect('home')
@@ -57,7 +59,7 @@ def criar_perfil(request):
 @login_required
 def meus_ingressos(request):
     """Lista os ingressos do usuário"""
-    ingressos = Ingresso.objects.filter(participante=request.user).order_by('-data_compra')
+    ingressos = Ingresso.objects.filter(participante=request.user).order_by('-evento__data')
     
     context = {'ingressos': ingressos}
     return render(request, 'eventos/meus_ingressos.html', context)
@@ -69,9 +71,20 @@ def dashboard_palestrante(request):
     # Buscar eventos do palestrante
     eventos = Evento.objects.filter(criador=request.user).order_by('-data')
     
+    # Contar ingressos vendidos dos eventos do palestrante
+    total_ingressos = Ingresso.objects.filter(evento__criador=request.user).count()
+    
+    # Buscar perfil do usuário
+    try:
+        user_profile = Usuario.objects.get(pk=request.user.pk)
+    except Usuario.DoesNotExist:
+        user_profile = None
+    
     context = {
         'eventos': eventos,
         'total_eventos': eventos.count(),
+        'total_ingressos': total_ingressos,
+        'user_profile': user_profile,
     }
     return render(request, 'usuario/dashboard_palestrante.html', context)
 
@@ -80,13 +93,20 @@ def dashboard_palestrante(request):
 def dashboard_participante(request):
     """Dashboard específico para participantes"""
     # Buscar ingressos do participante
-    ingressos = Ingresso.objects.filter(participante=request.user).order_by('-data_compra')
+    ingressos = Ingresso.objects.filter(participante=request.user).order_by('-data_criacao')
     eventos_inscritos = [ingresso.evento for ingresso in ingressos]
+    
+    # Buscar perfil do usuário
+    try:
+        user_profile = Usuario.objects.get(pk=request.user.pk)
+    except Usuario.DoesNotExist:
+        user_profile = None
     
     context = {
         'ingressos': ingressos,
         'eventos_inscritos': eventos_inscritos,
         'total_ingressos': ingressos.count(),
+        'user_profile': user_profile,
     }
     return render(request, 'usuario/dashboard_participante.html', context)
 

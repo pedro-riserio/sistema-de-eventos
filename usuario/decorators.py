@@ -27,7 +27,7 @@ def palestrante_required(view_func):
     Decorator específico para palestrantes.
     Uso: @palestrante_required
     """
-    return grupo_required('palestrante')(view_func)
+    return grupo_required('Palestrante')(view_func)
 
 
 def participante_required(view_func):
@@ -35,7 +35,7 @@ def participante_required(view_func):
     Decorator específico para participantes.
     Uso: @participante_required
     """
-    return grupo_required('participante')(view_func)
+    return grupo_required('Participante')(view_func)
 
 
 def multiplos_grupos_required(*grupos):

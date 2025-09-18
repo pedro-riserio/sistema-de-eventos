@@ -2,6 +2,14 @@
 
 Um sistema web desenvolvido em Django para gerenciamento completo de eventos, permitindo criação, organização e participação em eventos diversos.
 
+
+## LINK DO VIDEO:
+
+### No Youtube 
+- 
+
+
+
 ## Funcionalidades
 
 ### Para Organizadores (Palestrantes)
@@ -49,60 +57,6 @@ sistema-eventos/
 └── eventospsw/      # Configurações do projeto
 ```
 
-## Instalação e Configuração
-
-### Pré-requisitos
-- Python 3.8+
-- pip (gerenciador de pacotes Python)
-
-### Passos para instalação
-
-1. **Clone o repositório**
-   ```bash
-   git clone <url-do-repositorio>
-   cd sistema-eventos
-   ```
-
-2. **Crie um ambiente virtual**
-   ```bash
-   python -m venv venv
-   ```
-
-3. **Ative o ambiente virtual**
-   - Windows:
-     ```bash
-     venv\Scripts\activate
-     ```
-   - Linux/Mac:
-     ```bash
-     source venv/bin/activate
-     ```
-
-4. **Instale as dependências**
-   ```bash
-   pip install django
-   ```
-
-5. **Execute as migrações**
-   ```bash
-   python manage.py makemigrations
-   python manage.py migrate
-   ```
-
-6. **Crie um superusuário**
-   ```bash
-   python manage.py createsuperuser
-   ```
-
-7. **Execute o servidor de desenvolvimento**
-   ```bash
-   python manage.py runserver
-   ```
-
-8. **Acesse o sistema**
-   - Aplicação: http://127.0.0.1:8000/
-   - Admin: http://127.0.0.1:8000/admin/
-
 ## Configuração Inicial
 
 ### Criação de Grupos e Permissões
@@ -136,25 +90,7 @@ Todos os usuários devem completar seu perfil após o registro:
 3. Inscreva-se nos eventos de interesse
 4. Gerencie suas inscrições na área "Meus Ingressos"
 
-## Contribuição
 
-Para contribuir com o projeto:
-
-1. Faça um fork do repositório
-2. Crie uma branch para sua feature (`git checkout -b feature/nova-funcionalidade`)
-3. Commit suas mudanças (`git commit -am 'Adiciona nova funcionalidade'`)
-4. Push para a branch (`git push origin feature/nova-funcionalidade`)
-5. Abra um Pull Request
-
-## Licença
-
-Este projeto está sob a licença MIT. Veja o arquivo LICENSE para mais detalhes.
-
-## Suporte
-
-Para dúvidas ou problemas:
-- Abra uma issue no GitHub
-- Entre em contato através do formulário de contato do sistema
 
 ## Roadmap
 
